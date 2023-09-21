@@ -25,3 +25,5 @@ Route.post('/createUser','UsersController.store')
 Route.get('/users', 'UsersController.index');
 
 Route.post('/login','UsersController.login')
+
+Route.put('/userUpdate/:id','UsersController.update')
