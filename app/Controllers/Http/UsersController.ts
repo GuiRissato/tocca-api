@@ -59,14 +59,16 @@ export default class UsersController {
       public async update({ request, response }: HttpContextContract){
         try {
           const body = request.body()
+          // console.log('body', body)
       
           const user = await User.findOrFail(request.params().id)
+          // console.log('user',user)
       
           user.name = body.name ? body.name : user.name
           user.password = body.password ? body.password : user.password
           user.user_name = body.email ? body.email : user.user_name
           user.name = body.name ? body.name : user.name
-          user.age = body.age ? body.updated_at : user.age      
+          user.age = body.age ? body.age : user.age      
           await user.save()
       
           response.status(201)
@@ -77,7 +79,7 @@ export default class UsersController {
           }
         } catch (error) {
     
-          console.log('update user error', error)
+          console.log('update user', error)
     
         }
       }
