@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 
 export default class UsersController {
-    public async login({ request, response}: HttpContextContract) {
+  public async login({ request, response}: HttpContextContract) {
         let {user_name, password} = request.all()
         console.log(user_name,password)
          try {
@@ -26,18 +26,18 @@ export default class UsersController {
             console.log(e)
            return response.unauthorized('Invalid credentials')
          }
-       }
+  }
    
-    public async index( {response}: HttpContextContract){
+  public async index( {response}: HttpContextContract){
         try {
             const users = await User.all();
             return response.status(200).json(users);
           } catch (error) {
             return response.status(500).json({ error: 'Erro ao buscar usuários' });
           }
-      }
+  }
     
-      public async store({ request, response }: HttpContextContract){
+  public async store({ request, response }: HttpContextContract){
         try {
           const body = request.body();
          
@@ -54,9 +54,9 @@ export default class UsersController {
           console.log('store user error', error)
     
         }
-      }
+  }
     
-      public async update({ request, response }: HttpContextContract){
+  public async update({ request, response }: HttpContextContract){
         try {
           const body = request.body()
           // console.log('body', body)
@@ -82,9 +82,9 @@ export default class UsersController {
           console.log('update user', error)
     
         }
-      }
+  }
     
-      public async destroy({ request, response }: HttpContextContract){
+  public async destroy({ request, response }: HttpContextContract){
         try {
           const user = await User.findOrFail(request.params().id)
       
