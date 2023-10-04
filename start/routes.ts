@@ -24,6 +24,8 @@ Route.post('/createUser','UsersController.store')
 
 Route.get('/users', 'UsersController.index');
 
+Route.delete('/destroy/:id', 'UsersController.destroy')
+
 Route.post('/login','UsersController.login')
 
 Route.put('/userUpdate/:id','UsersController.update')
