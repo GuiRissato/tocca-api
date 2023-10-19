@@ -29,3 +29,5 @@ Route.delete('/destroy/:id', 'UsersController.destroy')
 Route.post('/login','UsersController.login')
 
 Route.put('/userUpdate/:id','UsersController.update')
+
+Route.post('/frete','FreteController.calc')
