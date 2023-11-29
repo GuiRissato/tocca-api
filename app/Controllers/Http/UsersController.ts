@@ -8,7 +8,6 @@ export default class UsersController {
          try {
  
            let user = await User.findBy('user_name',user_name)
- 
            if (user) {
              const isPasswordValid = await user.verifyPassword(password)
              if (isPasswordValid){
@@ -59,16 +58,14 @@ export default class UsersController {
   public async update({ request, response }: HttpContextContract){
         try {
           const body = request.body()
-          // console.log('body', body)
       
           const user = await User.findOrFail(request.params().id)
-          // console.log('user',user)
-      
+          
           user.name = body.name ? body.name : user.name
           user.password = body.password ? body.password : user.password
           user.user_name = body.email ? body.email : user.user_name
           user.name = body.name ? body.name : user.name
-          user.age = body.age ? body.age : user.age      
+          user.email = body.age ? body.age : user.email      
           await user.save()
       
           response.status(201)
