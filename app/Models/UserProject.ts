@@ -2,6 +2,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, BelongsTo, belongsTo } from '@ioc:Adonis/Lucid/Orm'
 import Project from './Project'
+import User from './User'
 
 export default class UserProject extends BaseModel {
   @column({ isPrimary: true })
@@ -21,6 +22,15 @@ export default class UserProject extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @belongsTo(() => User, {
+    foreignKey: 'user_id',
+  })
+  public user: BelongsTo<typeof User>
+
+  @belongsTo(() => Project, {
+    foreignKey: 'project_id',
+  })
 
   @belongsTo(() => Project)
   public project: BelongsTo<typeof Project>

@@ -33,4 +33,17 @@ export default class ColumnsController {
     await column.delete()
     return { message: 'Column deleted' }
   }
+
+  public async getColumnsForBoard({ params }: HttpContextContract) {
+    const { projectId, boardId } = params;
+
+    // Encontre as colunas específicas relacionadas ao board em um projeto
+    const columns = await Column.query()
+      .where('board_id', boardId)
+      .whereHas('board', (query) => {
+        query.where('project_id', projectId);
+      });
+
+    return columns;
+  }
 }

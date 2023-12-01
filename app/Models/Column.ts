@@ -22,6 +22,9 @@ export default class Column extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  @belongsTo(() => Board)
+  @belongsTo(() => Board, {
+    foreignKey: 'board_id', // Chave estrangeira na tabela de colunas
+    localKey: 'id', // Chave primária na tabela de boards
+  })
   public board: BelongsTo<typeof Board>
 }

@@ -27,6 +27,11 @@ export default class Card extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+  
+  @belongsTo(() => Column, {
+    foreignKey: 'column_id', 
+    localKey: 'id', 
+  })
 
   @belongsTo(() => Column)
   public column: BelongsTo<typeof Column>

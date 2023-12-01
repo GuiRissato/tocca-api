@@ -4,7 +4,6 @@ import User from 'App/Models/User'
 export default class UsersController {
   public async login({ request, response}: HttpContextContract) {
         let {user_name, password} = request.all()
-        console.log(user_name,password)
          try {
  
            let user = await User.findBy('user_name',user_name)
