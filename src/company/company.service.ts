@@ -10,12 +10,13 @@ export class CompanyService {
   constructor(
     @InjectRepository(Company) private readonly repository: Repository<Company>,
   ) {}
-  create(createCompanyDto: CreateCompanyDto): Promise<Company | object> {
+  create(createCompanyDto: CreateCompanyDto): Promise<Company> {
     try {
       const company = this.repository.create(createCompanyDto);
       return this.repository.save(company);
     } catch (error) {
       console.log('error creating new company', error.message);
+      throw error;
     }
   }
 
@@ -52,6 +53,7 @@ export class CompanyService {
       return this.repository.save(company);
     } catch (error) {
       console.log('error updating company', error.message);
+      throw new NotFoundException(error.message);
     }
   }
 
