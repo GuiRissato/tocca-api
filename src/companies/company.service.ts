@@ -31,8 +31,8 @@ export class CompanyService {
 
   findOne(id: number): Promise<Company> {
     try {
-      const company = this.repository.findOne({ where: { id } });
-      return company;
+      const findOneCompany = this.repository.findOne({ where: { id } });
+      return findOneCompany;
     } catch (error) {
       console.log('error finding company', error.message);
     }
