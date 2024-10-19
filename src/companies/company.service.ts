@@ -16,7 +16,7 @@ export class CompanyService {
       return this.repository.save(company);
     } catch (error) {
       console.log('error creating new company', error.message);
-      throw error;
+      throw 'error creating new company' + error.message;
     }
   }
 

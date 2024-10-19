@@ -69,7 +69,7 @@ describe('CompanyController', () => {
       const company = { id: 1, name: 'Test Company' };
       mockCompanyService.findOne.mockResolvedValue(company);
 
-      const result = await controller.findOne('1');
+      const result = await controller.findOne(1);
 
       expect(mockCompanyService.findOne).toHaveBeenCalledWith(1);
       expect(result).toEqual(company);
@@ -85,7 +85,7 @@ describe('CompanyController', () => {
       const updatedCompany = { id: 1, ...updateCompanyDto };
       mockCompanyService.update.mockResolvedValue(updatedCompany);
 
-      const result = await controller.update('1', updateCompanyDto);
+      const result = await controller.update(1, updateCompanyDto);
 
       expect(mockCompanyService.update).toHaveBeenCalledWith(
         1,
@@ -100,7 +100,7 @@ describe('CompanyController', () => {
       const removedCompany = { id: 1, name: 'Test Company' };
       mockCompanyService.remove.mockResolvedValue(removedCompany);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove(1);
 
       expect(mockCompanyService.remove).toHaveBeenCalledWith(1);
       expect(result).toEqual(removedCompany);

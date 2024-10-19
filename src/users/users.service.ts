@@ -58,9 +58,9 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
-      const userToDelete = await this.findOne(parseInt(id));
+      const userToDelete = await this.findOne(id);
       if (!userToDelete) {
         throw new NotFoundException(`User ${id} not found`);
       }
