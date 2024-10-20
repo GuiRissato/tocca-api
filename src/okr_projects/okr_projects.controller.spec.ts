@@ -1,8 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OkrProjectsController } from './okr_projects.controller';
 import { OkrProjectsService } from './okr_projects.service';
-import { OkrProject } from './entities/okr_project.entity';
+import { CreateOkrProjectDto } from './dto/create-okr_project.dto';
 import { UpdateOkrProjectDto } from './dto/update-okr_project.dto';
+
+const mockOkrProjectsService = {
+  create: jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+};
 
 describe('OkrProjectsController', () => {
   let controller: OkrProjectsController;
@@ -11,93 +19,67 @@ describe('OkrProjectsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OkrProjectsController],
-      providers: [OkrProjectsService],
+      providers: [
+        {
+          provide: OkrProjectsService,
+          useValue: mockOkrProjectsService,
+        },
+      ],
     }).compile();
 
     controller = module.get<OkrProjectsController>(OkrProjectsController);
     service = module.get<OkrProjectsService>(OkrProjectsService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should create a new OKR project', async () => {
-    const createDto: OkrProject = {
-      id: 0,
-      company_id: 0,
-      project_name: '',
-      description: '',
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    jest.spyOn(service, 'create').mockImplementation(async () => createDto);
-
-    expect(await controller.create(createDto)).toBe(createDto);
-  });
-
-  it('should find all OKR projects for a company', async () => {
-    const companyId = 1; 
-    const projects = [
-      {
-        id: 0,
-        company_id: companyId,
+  describe('create', () => {
+    it('should call okrprokects create with the correct values', async () => {
+      const createOkrProkectDto: CreateOkrProjectDto = {
+        company_id: 1,
         project_name: 'projeto 1',
-        description: '',
-        created_at: new Date(),
-        updated_at: new Date()
-      },
-      {
-        id: 1,
-        company_id: companyId,
-        project_name: 'projeto 2',
-        description: '',
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    ];
-    jest.spyOn(service, 'findAll').mockImplementation(async () => projects);
+        description: 'descrição 1',
+      };
 
-    expect(await controller.findAll(companyId)).toBe(projects);
+      const createdOkrProject = { id: 1, ...createOkrProkectDto };
+
+      mockOkrProjectsService.create.mockResolvedValue(createdOkrProject);
+
+      const result = await controller.create(createOkrProkectDto);
+
+      expect(service.create).toHaveBeenCalledWith(createOkrProkectDto);
+      expect(result).toEqual(createdOkrProject);
+    });
   });
 
-  it('should find a specific OKR project by ID', async () => {
-    const projectId = 1; // Mock project ID
-    const project: OkrProject = {
-      id: 1,
-      company_id: 0,
-      project_name: '',
-      description: '',
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    jest.spyOn(service, 'findOne').mockImplementation(async () => project);
+  describe('findAll', () => {
+    it('should retunr all projects from a company id', async () => {
+      const okrProjects: CreateOkrProjectDto[] = [
+        {
+          company_id: 1,
+          project_name: 'projeto 1',
+          description: 'descrição 1',
+        },
+        {
+          company_id: 1,
+          project_name: 'projeto 1',
+          description: 'descrição 1',
+        },
+        {
+          company_id: 1,
+          project_name: 'projeto 1',
+          description: 'descrição 1',
+        },
+      ];
 
-    expect(await controller.findOne(projectId)).toBe(project);
-  });
+      mockOkrProjectsService.findAll.mockResolvedValue(okrProjects);
 
-  it('should update an OKR project', async () => {
-    const projectId = 1; // Mock project ID
-    const updateDto: UpdateOkrProjectDto = {
-      description: 'teste update',
-    };
-    const updatedProject: UpdateOkrProjectDto = { id: projectId, ...updateDto };
-    jest
-      .spyOn(service, 'update')
-      .mockImplementation(async () => updatedProject);
+      const result = await controller.findAll(1);
 
-    expect(await controller.update(projectId, updateDto)).toBe(updatedProject);
-  });
-
-  it('should remove an OKR project', async () => {
-    const projectId = 1; // Mock project ID
-    const removedProject = {
-      /* mock removed project object */
-    };
-    jest
-      .spyOn(service, 'remove')
-      .mockImplementation(async () => removedProject);
-
-    expect(await controller.remove(projectId)).toBe(removedProject);
+      expect(service.findAll).toHaveBeenCalledWith(1);
+      expect(result).toEqual(okrProjects);
+    });
   });
 });

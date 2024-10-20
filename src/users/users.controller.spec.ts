@@ -36,7 +36,7 @@ describe('UsersController', () => {
   });
 
   describe('create', () => {
-    it('should call UsersService.create with the correct values', async () => {
+    it('should call Users create with the correct values', async () => {
       const createUserDto: CreateUserDto = {
         company_id: 1,
         username: 'Test User',
