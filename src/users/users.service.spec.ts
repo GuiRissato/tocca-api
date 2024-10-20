@@ -128,7 +128,7 @@ describe('UsersService', () => {
       mockUserRepository.findOne.mockResolvedValue(user);
       mockUserRepository.remove.mockResolvedValue(user);
 
-      const result = await service.remove('1');
+      const result = await service.remove(1);
 
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -140,7 +140,7 @@ describe('UsersService', () => {
     it('should throw error if user to delete is not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.remove('2')).rejects.toThrow('User 2 not found');
+      await expect(service.remove(2)).rejects.toThrow('User 2 not found');
     });
   });
 });

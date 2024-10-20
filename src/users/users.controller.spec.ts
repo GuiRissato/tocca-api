@@ -98,9 +98,9 @@ describe('UsersController', () => {
       const removedUser = { id: 1, username: 'Test User' };
       mockUsersService.remove.mockResolvedValue(removedUser);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove(1);
 
-      expect(service.remove).toHaveBeenCalledWith('1');
+      expect(service.remove).toHaveBeenCalledWith(1);
       expect(result).toEqual(removedUser);
     });
   });

@@ -38,15 +38,15 @@ describe('OkrProjectsService', () => {
       description: '',
     };
     const createdOkrProject: OkrProject = {
-      id: 0,
+      id: 1, 
       company_id: 0,
-      project_name: '',
-      description: '',
-      created_at: undefined,
-      updated_at: undefined,
+      project_name: 'projeto 1',
+      description: 'sem descrição',
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
-    jest.spyOn(repository, 'create').mockReturnValue(createDto);
+    jest.spyOn(repository, 'create').mockReturnValue(createdOkrProject);
     jest.spyOn(repository, 'save').mockResolvedValue(createdOkrProject);
 
     const result = await service.create(createDto);
@@ -55,7 +55,7 @@ describe('OkrProjectsService', () => {
   });
 
   it('should find all OKR projects by company ID', async () => {
-    const companyId = 1; // Example company ID
+    const companyId = 1;
     const mockOkrProjects = [
       {
         id: 1,
@@ -75,8 +75,16 @@ describe('OkrProjectsService', () => {
   });
 
   it('should find one OKR project by ID', async () => {
-    const id = 1; // Example OKR project ID
-    const mockOkrProject = { id: 1, company_id: 1, project_name: 'Project 1' };
+    const id = 1;
+    const companyId = 1;
+    const mockOkrProject = {
+      id: 1,
+      company_id: companyId,
+      project_name: 'Project 1',
+      description: 'project 1',
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
 
     jest.spyOn(repository, 'findOne').mockResolvedValue(mockOkrProject);
 
@@ -88,12 +96,15 @@ describe('OkrProjectsService', () => {
   it('should update an OKR project', async () => {
     const id = 1; // Example OKR project ID
     const updateDto: UpdateOkrProjectDto = {
-      /* mock update DTO data */
+      description: 'teste 1',
     };
     const updatedOkrProject: OkrProject = {
       id: 1,
       company_id: 1,
       project_name: 'Updated Project 1',
+      description: '',
+      created_at: undefined,
+      updated_at: undefined,
     };
 
     jest.spyOn(repository, 'preload').mockResolvedValue(updatedOkrProject);
@@ -106,7 +117,15 @@ describe('OkrProjectsService', () => {
 
   it('should remove an OKR project', async () => {
     const id = 1; // Example OKR project ID
-    const mockOkrProject = { id: 1, company_id: 1, project_name: 'Project 1' };
+    const companyId = 1;
+    const mockOkrProject = {
+      id: 1,
+      company_id: companyId,
+      project_name: 'Project 1',
+      description: 'project 1',
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
 
     jest.spyOn(service, 'findOne').mockResolvedValue(mockOkrProject);
     jest.spyOn(repository, 'remove').mockResolvedValue(mockOkrProject);

@@ -7,6 +7,11 @@ import { CompanyModule } from './companies/company.module';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { OkrProjectsModule } from './okr_projects/okr_projects.module';
+import { CompanyController } from './companies/company.controller';
+import { OkrProjectsController } from './okr_projects/okr_projects.controller';
+import { UsersService } from './users/users.service';
+import { CompanyService } from './companies/company.service';
+import { OkrProjectsService } from './okr_projects/okr_projects.service';
 
 @Module({
   imports: [
@@ -25,7 +30,12 @@ import { OkrProjectsModule } from './okr_projects/okr_projects.module';
     UsersModule,
     OkrProjectsModule,
   ],
-  controllers: [AppController, UsersController],
-  providers: [AppService],
+  controllers: [
+    AppController,
+    UsersController,
+    CompanyController,
+    OkrProjectsController,
+  ],
+  providers: [AppService, UsersService, CompanyService, OkrProjectsService],
 })
 export class AppModule {}
