@@ -82,4 +82,54 @@ describe('OkrProjectsController', () => {
       expect(result).toEqual(okrProjects);
     });
   });
+
+  describe('findOne', () => {
+    it('should return a okr project by ID', async () => {
+      const okrProject: CreateOkrProjectDto = {
+        company_id: 1,
+        project_name: 'projeto 1',
+        description: 'descrição 1',
+      };
+
+      mockOkrProjectsService.findOne.mockResolvedValue(okrProject);
+
+      const result = await controller.findOne(1);
+
+      expect(service.findOne).toHaveBeenCalledWith(1);
+      expect(result).toEqual(okrProject);
+    });
+  });
+
+  describe('update', () => {
+    it('should call okrProject update with the correct values', async () => {
+      const updateOkrProjectDto: UpdateOkrProjectDto = {
+        company_id: 1,
+        description: 'changed description',
+      };
+
+      mockOkrProjectsService.update.mockResolvedValue(updateOkrProjectDto);
+
+      const result = await controller.update(1, updateOkrProjectDto);
+
+      expect(service.update).toHaveBeenCalledWith(1, updateOkrProjectDto);
+      expect(result).toEqual(updateOkrProjectDto);
+    });
+  });
+
+  describe('remove', () => {
+    it('should call okrproject remove with the correct id', async () => {
+      const removedOkrProject: CreateOkrProjectDto = {
+        project_name: 'project1',
+        description: 'description 1',
+        company_id: 1,
+      };
+
+      mockOkrProjectsService.remove.mockResolvedValue(removedOkrProject);
+
+      const result = await controller.remove(1);
+
+      expect(service.remove).toHaveBeenCalledWith(1);
+      expect(result).toEqual(removedOkrProject);
+    });
+  });
 });
