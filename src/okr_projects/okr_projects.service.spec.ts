@@ -38,7 +38,7 @@ describe('OkrProjectsService', () => {
       description: '',
     };
     const createdOkrProject: OkrProject = {
-      id: 1, 
+      id: 1,
       company_id: 0,
       project_name: 'projeto 1',
       description: 'sem descrição',
