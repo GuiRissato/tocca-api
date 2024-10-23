@@ -16,7 +16,7 @@ export class KeyResultsService {
       const createKeyResult = this.repository.create(createKeyResultDto);
       return this.repository.save(createKeyResult);
     } catch (error) {
-      console.log('error creating key result', error.message);
+      console.error('error creating key result', error.message);
       throw 'error creating key result' + error.message;
     }
   }
@@ -29,7 +29,7 @@ export class KeyResultsService {
 
       return allKeyResults;
     } catch (error) {
-      console.log('error finding key result by object_id', error.message);
+      console.error('error finding key result by object_id', error.message);
       throw 'error finding key result by object_id' + error.message;
     }
   }
@@ -39,7 +39,7 @@ export class KeyResultsService {
       const foundKeyResult = this.repository.findOne({ where: { id } });
       return foundKeyResult;
     } catch (error) {
-      console.log('error finding one key result', error.message);
+      console.error('error finding one key result', error.message);
       throw 'error finding one key result' + error.message;
     }
   }
@@ -59,7 +59,7 @@ export class KeyResultsService {
       }
       return this.repository.save(keyResult);
     } catch (error) {
-      console.log('error updating key result', error.message);
+      console.error('error updating key result', error.message);
       throw new NotFoundException(error.message);
     }
   }
@@ -72,7 +72,7 @@ export class KeyResultsService {
       }
       return this.repository.remove(keyResultToDelete);
     } catch (error) {
-      console.log('error deleting key result', error.message);
+      console.error('error deleting key result', error.message);
       throw new NotFoundException(error.message);
     }
   }

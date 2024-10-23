@@ -16,7 +16,7 @@ export class UsersService {
       const user = this.repository.create(createUserDto);
       return this.repository.save(user);
     } catch (error) {
-      console.log('error creating user', error.message);
+      console.error('error creating user', error.message);
       throw 'error creating user' + error.message;
     }
   }
@@ -26,7 +26,7 @@ export class UsersService {
       const allUsers = this.repository.find();
       return allUsers;
     } catch (error) {
-      console.log('error finding users', error.message);
+      console.error('error finding users', error.message);
       throw 'error finding users' + error.message;
     }
   }
@@ -36,7 +36,7 @@ export class UsersService {
       const findOneUser = this.repository.findOne({ where: { id } });
       return findOneUser;
     } catch (error) {
-      console.log('error finding one user', error.message);
+      console.error('error finding one user', error.message);
       throw 'error finding one user' + error.message;
     }
   }
@@ -53,7 +53,7 @@ export class UsersService {
       }
       return this.repository.save(user);
     } catch (error) {
-      console.log('error updating user', error.message);
+      console.error('error updating user', error.message);
       throw new NotFoundException(error.message);
     }
   }
@@ -66,7 +66,7 @@ export class UsersService {
       }
       return this.repository.remove(userToDelete);
     } catch (error) {
-      console.log('error deleting user', error.message);
+      console.error('error deleting user', error.message);
       throw new NotFoundException(error.message);
     }
   }

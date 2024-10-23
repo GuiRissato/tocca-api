@@ -17,7 +17,7 @@ export class ObjectivesService {
       const objective = this.repository.create(createObjectiveDto);
       return this.repository.save(objective);
     } catch (error) {
-      console.log('error creating objective', error.message);
+      console.error('error creating objective', error.message);
       throw 'error creating objective' + error.message;
     }
   }
@@ -29,7 +29,7 @@ export class ObjectivesService {
       });
       return allObjectives;
     } catch (error) {
-      console.log('error finding objectives by project_id', error.message);
+      console.error('error finding objectives by project_id', error.message);
       throw 'error finding objectives by project_id' + error.message;
     }
   }
@@ -39,7 +39,7 @@ export class ObjectivesService {
       const foundObjective = this.repository.findOne({ where: { id } });
       return foundObjective;
     } catch (error) {
-      console.log('error finding one objective', error.message);
+      console.error('error finding one objective', error.message);
       throw 'error finding one objective' + error.message;
     }
   }
@@ -59,7 +59,7 @@ export class ObjectivesService {
       }
       return this.repository.save(objective);
     } catch (error) {
-      console.log('error updating objective', error.message);
+      console.error('error updating objective', error.message);
       throw new NotFoundException(error.message);
     }
   }
@@ -72,7 +72,7 @@ export class ObjectivesService {
       }
       return this.repository.remove(objectiveToDelete);
     } catch (error) {
-      console.log('error deleting objective', error.message);
+      console.error('error deleting objective', error.message);
       throw new NotFoundException(error.message);
     }
   }

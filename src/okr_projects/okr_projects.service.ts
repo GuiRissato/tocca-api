@@ -16,7 +16,7 @@ export class OkrProjectsService {
       const okrProject = this.repository.create(createOkrProjectDto);
       return this.repository.save(okrProject);
     } catch (error) {
-      console.log('error creating okr project', error.message);
+      console.error('error creating okr project', error.message);
       throw 'error creating okr project' + error.message;
     }
   }
@@ -28,7 +28,10 @@ export class OkrProjectsService {
       });
       return allOkrProjectsByCompany;
     } catch (error) {
-      console.log('Error retrieving OKR projects by company ID', error.message);
+      console.error(
+        'Error retrieving OKR projects by company ID',
+        error.message,
+      );
       throw new Error('Error retrieving OKR projects by company ID');
     }
   }
@@ -38,12 +41,15 @@ export class OkrProjectsService {
       const findOneOkrProject = this.repository.findOne({ where: { id } });
       return findOneOkrProject;
     } catch (error) {
-      console.log('error find one okr project', error.message);
+      console.error('error find one okr project', error.message);
       throw 'Error find one okr project';
     }
   }
 
-  async update(id: number, updateOkrProjectDto: UpdateOkrProjectDto) {
+  async update(
+    id: number,
+    updateOkrProjectDto: UpdateOkrProjectDto,
+  ): Promise<OkrProject> {
     try {
       const okrProject = await this.repository.preload({
         id: id,
@@ -51,12 +57,12 @@ export class OkrProjectsService {
       });
 
       if (!okrProject) {
-        throw new NotFoundException(`Okr project  ${id} not found`);
+        throw new NotFoundException(`Okr project ${id} not found`);
       }
 
       return this.repository.save(okrProject);
     } catch (error) {
-      console.log('error updating okrproject', error.message);
+      console.error('error updating okrproject', error.message);
       throw new NotFoundException(error.message);
     }
   }
@@ -66,7 +72,7 @@ export class OkrProjectsService {
       const okrProject = await this.findOne(id);
       return this.repository.remove(okrProject);
     } catch (error) {
-      console.log('error delenting okr project', error.message);
+      console.error('error delenting okr project', error.message);
       throw 'error deleting company';
     }
   }

@@ -15,7 +15,7 @@ export class CompanyService {
       const company = this.repository.create(createCompanyDto);
       return this.repository.save(company);
     } catch (error) {
-      console.log('error creating new company', error.message);
+      console.error('error creating new company', error.message);
       throw 'error creating new company' + error.message;
     }
   }
@@ -25,7 +25,7 @@ export class CompanyService {
       const allCompanies = this.repository.find();
       return allCompanies;
     } catch (error) {
-      console.log('error finding all companies', error.message);
+      console.error('error finding all companies', error.message);
     }
   }
 
@@ -34,7 +34,7 @@ export class CompanyService {
       const findOneCompany = this.repository.findOne({ where: { id } });
       return findOneCompany;
     } catch (error) {
-      console.log('error finding company', error.message);
+      console.error('error finding company', error.message);
     }
   }
 
@@ -52,7 +52,7 @@ export class CompanyService {
       }
       return this.repository.save(company);
     } catch (error) {
-      console.log('error updating company', error.message);
+      console.error('error updating company', error.message);
       throw new NotFoundException(error.message);
     }
   }
@@ -62,7 +62,7 @@ export class CompanyService {
       const company = await this.findOne(id);
       return this.repository.remove(company);
     } catch (error) {
-      console.log('error deleting company', error.message);
+      console.error('error deleting company', error.message);
     }
   }
 }
