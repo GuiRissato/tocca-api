@@ -1,4 +1,3 @@
-import { OkrProject } from '../../okr_projects/entities/okr_project.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,21 +7,22 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Objective } from '../../objectives/entities/objective.entity';
 
 @Entity()
-export class Objective {
+export class KeyResult {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  project_id: number;
+  objective_id: number;
 
-  @ManyToOne(() => OkrProject)
-  @JoinColumn({ name: 'project_id' })
-  project: OkrProject;
+  @ManyToOne(() => Objective)
+  @JoinColumn({ name: 'objective_id' })
+  objective: Objective;
 
   @Column()
-  objective_name: string;
+  key_result_name: string;
 
   @Column('text')
   description: string;

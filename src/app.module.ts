@@ -13,6 +13,7 @@ import { UsersService } from './users/users.service';
 import { CompanyService } from './companies/company.service';
 import { OkrProjectsService } from './okr_projects/okr_projects.service';
 import { ObjectivesModule } from './objectives/objectives.module';
+import { KeyResultsModule } from './key_results/key_results.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ObjectivesModule } from './objectives/objectives.module';
     UsersModule,
     OkrProjectsModule,
     ObjectivesModule,
+    KeyResultsModule,
   ],
   controllers: [
     AppController,

@@ -5,6 +5,7 @@ import { CreateOkrProjectDto } from './dto/create-okr_project.dto';
 import { UpdateOkrProjectDto } from './dto/update-okr_project.dto';
 import { OkrProject } from './entities/okr_project.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { Company } from '../companies/entities/company.entity';
 
 describe('OkrProjectsService', () => {
   let service: OkrProjectsService;
@@ -44,6 +45,7 @@ describe('OkrProjectsService', () => {
       description: 'sem descrição',
       created_at: new Date(),
       updated_at: new Date(),
+      company: new Company(),
     };
 
     jest.spyOn(repository, 'create').mockReturnValue(createdOkrProject);
@@ -64,6 +66,7 @@ describe('OkrProjectsService', () => {
         description: 'project 1',
         created_at: new Date(),
         updated_at: new Date(),
+        company: new Company(),
       },
     ];
 
@@ -84,6 +87,7 @@ describe('OkrProjectsService', () => {
       description: 'project 1',
       created_at: new Date(),
       updated_at: new Date(),
+      company: new Company(),
     };
 
     jest.spyOn(repository, 'findOne').mockResolvedValue(mockOkrProject);
@@ -103,8 +107,9 @@ describe('OkrProjectsService', () => {
       company_id: 1,
       project_name: 'Updated Project 1',
       description: '',
-      created_at: undefined,
-      updated_at: undefined,
+      created_at: new Date(),
+      updated_at: new Date(),
+      company: new Company(),
     };
 
     jest.spyOn(repository, 'preload').mockResolvedValue(updatedOkrProject);
@@ -125,6 +130,7 @@ describe('OkrProjectsService', () => {
       description: 'project 1',
       created_at: new Date(),
       updated_at: new Date(),
+      company: new Company(),
     };
 
     jest.spyOn(service, 'findOne').mockResolvedValue(mockOkrProject);

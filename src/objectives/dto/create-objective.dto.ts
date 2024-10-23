@@ -2,6 +2,7 @@ import { IsNotEmpty, IsString, IsInt, IsDate } from 'class-validator';
 
 export class CreateObjectiveDto {
   @IsInt()
+  @IsNotEmpty()
   project_id: number;
 
   @IsString()

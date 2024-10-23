@@ -6,6 +6,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Company } from '../companies/entities/company.entity';
 
 const mockUserRepository = {
   create: jest.fn(),
@@ -48,7 +49,13 @@ describe('UsersService', () => {
         password: 'password',
         role_id: 1,
       };
-      const user = { id: 1, ...createUserDto };
+      const user: User = {
+        id: 1,
+        ...createUserDto,
+        company: new Company(),
+        created_at: undefined,
+        updated_at: undefined,
+      };
 
       mockUserRepository.create.mockReturnValue(user);
       mockUserRepository.save.mockResolvedValue(user);
@@ -63,7 +70,30 @@ describe('UsersService', () => {
 
   describe('findAll', () => {
     it('should return all users', async () => {
-      const users = [{ id: 1, username: 'Test User' }];
+      const users: User[] = [
+        {
+          id: 1,
+          username: 'Test User',
+          company: new Company(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          company_id: 0,
+          email: '',
+          password: '',
+          role_id: 0,
+        },
+        {
+          id: 2,
+          username: 'Test User 2',
+          company: new Company(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          company_id: 0,
+          email: '',
+          password: '',
+          role_id: 0,
+        },
+      ];
       mockUserRepository.find.mockResolvedValue(users);
 
       const result = await service.findAll();
@@ -75,7 +105,17 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user by ID', async () => {
-      const user = { id: 1, username: 'Test User' };
+      const user: User = {
+        id: 1,
+        username: 'Test User',
+        company_id: 0,
+        company: new Company(),
+        email: '',
+        password: '',
+        role_id: 0,
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
       mockUserRepository.findOne.mockResolvedValue(user);
 
       const result = await service.findOne(1);

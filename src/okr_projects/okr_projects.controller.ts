@@ -20,8 +20,8 @@ export class OkrProjectsController {
     return this.okrProjectsService.create(createOkrProjectDto);
   }
 
-  @Get()
-  findAll(companyId: number) {
+  @Get(':companyId')
+  findAll(@Param() companyId: number) {
     return this.okrProjectsService.findAll(companyId);
   }
 

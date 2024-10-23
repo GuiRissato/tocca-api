@@ -5,6 +5,7 @@ import { Objective } from './entities/objective.entity';
 import { CreateObjectiveDto } from './dto/create-objective.dto';
 import { UpdateObjectiveDto } from './dto/update-objective.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { OkrProject } from '../okr_projects/entities/okr_project.entity';
 
 const mockObjectivesRepository = {
   create: jest.fn(),
@@ -60,6 +61,7 @@ describe('ObjectivesService', () => {
         status: '',
         start_date: new Date(),
         end_date: new Date(),
+        project: new OkrProject(),
       };
 
       jest.spyOn(repository, 'create').mockReturnValue(createdObjective);
@@ -85,6 +87,7 @@ describe('ObjectivesService', () => {
           status: 'progress',
           start_date: new Date(),
           end_date: new Date(),
+          project: new OkrProject(),
         },
       ];
 
@@ -109,6 +112,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
+        project: new OkrProject(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockObjective);
@@ -135,6 +139,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
+        project: new OkrProject(),
       };
 
       jest.spyOn(repository, 'preload').mockResolvedValue(updatedObjective);
@@ -159,6 +164,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
+        project: new OkrProject(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockObjective);

@@ -1,9 +1,12 @@
+import { Company } from '../../companies/entities/company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -13,6 +16,10 @@ export class OkrProject {
 
   @Column()
   company_id: number;
+
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @Column({ length: 100, nullable: false })
   project_name: string;
