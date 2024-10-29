@@ -9,6 +9,7 @@ import { OkrProjectsModule } from './okr_projects/okr_projects.module';
 import { ObjectivesModule } from './objectives/objectives.module';
 import { KeyResultsModule } from './key_results/key_results.module';
 import { ColumnsKeyResultModule } from './columns_key_result/columns_key_result.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ColumnsKeyResultModule } from './columns_key_result/columns_key_result.
     ObjectivesModule,
     KeyResultsModule,
     ColumnsKeyResultModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
