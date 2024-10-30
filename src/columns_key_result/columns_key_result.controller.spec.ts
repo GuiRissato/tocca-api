@@ -106,7 +106,7 @@ describe('ColumnsKeyResultController', () => {
 
       jest.spyOn(service, 'findAll').mockRejectedValue(new Error(errorMessage));
 
-      await expect(controller.findAll(keyResultId)).rejects.toThrowError(
+      await expect(controller.findAll(keyResultId)).rejects.toThrow(
         errorMessage,
       );
       expect(service.findAll).toHaveBeenCalledWith(keyResultId);
@@ -140,7 +140,7 @@ describe('ColumnsKeyResultController', () => {
 
       jest.spyOn(service, 'findOne').mockRejectedValue(new Error(errorMessage));
 
-      await expect(controller.findOne(columnId)).rejects.toThrowError(
+      await expect(controller.findOne(columnId)).rejects.toThrow(
         errorMessage,
       );
       expect(service.findOne).toHaveBeenCalledWith(columnId);
@@ -190,7 +190,7 @@ describe('ColumnsKeyResultController', () => {
 
       await expect(
         controller.update(columnId, updateColumnsKeyResultDto),
-      ).rejects.toThrowError(errorMessage);
+      ).rejects.toThrow(errorMessage);
       expect(service.update).toHaveBeenCalledWith(
         columnId,
         updateColumnsKeyResultDto,
@@ -211,7 +211,7 @@ describe('ColumnsKeyResultController', () => {
 
       await expect(
         controller.update(columnId, updateColumnsKeyResultDto),
-      ).rejects.toThrowError(NotFoundException);
+      ).rejects.toThrow(NotFoundException);
       expect(service.update).toHaveBeenCalledWith(
         columnId,
         updateColumnsKeyResultDto,
@@ -248,7 +248,7 @@ describe('ColumnsKeyResultController', () => {
       jest.spyOn(service, 'findOne').mockResolvedValue(null);
       jest.spyOn(service, 'remove').mockRejectedValue(new Error(errorMessage));
 
-      await expect(controller.remove(columnId)).rejects.toThrowError(
+      await expect(controller.remove(columnId)).rejects.toThrow(
         errorMessage,
       );
       expect(service.remove).toHaveBeenCalledWith(columnId);

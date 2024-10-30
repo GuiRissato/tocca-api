@@ -10,6 +10,7 @@ import { ObjectivesModule } from './objectives/objectives.module';
 import { KeyResultsModule } from './key_results/key_results.module';
 import { ColumnsKeyResultModule } from './columns_key_result/columns_key_result.module';
 import { TasksModule } from './tasks/tasks.module';
+import { TaskAssigneesModule } from './task_assingees/task_assignee.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TasksModule } from './tasks/tasks.module';
     KeyResultsModule,
     ColumnsKeyResultModule,
     TasksModule,
+    TaskAssigneesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
