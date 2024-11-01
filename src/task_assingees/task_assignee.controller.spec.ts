@@ -5,6 +5,8 @@ import { CreateTaskAssigneeDto } from './dto/create-task_assignee.dto';
 import { UpdateTaskAssigneeDto } from './dto/update-task_assignee.dto';
 import { TaskAssignee } from './entities/task_assignee.entity';
 import { NotFoundException } from '@nestjs/common';
+import { Task } from '../tasks/entities/task.entity';
+import { User } from '../users/entities/user.entity';
 
 const mockTaskAssigneesService = {
   create: jest.fn(),
@@ -52,8 +54,8 @@ describe('TaskAssigneesController', () => {
         user_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        task: null,
-        user: null,
+        task: new Task(),
+        user: new User(),
       };
 
       jest.spyOn(service, 'create').mockResolvedValue(createdTaskAssignee);

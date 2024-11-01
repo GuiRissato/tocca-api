@@ -12,7 +12,7 @@ export class TaskAssigneesService {
     private readonly repository: Repository<TaskAssignee>,
   ) {}
 
-  create(createTaskAssigneeDto: CreateTaskAssigneeDto) {
+  create(createTaskAssigneeDto: CreateTaskAssigneeDto): Promise<TaskAssignee> {
     try {
       const taskAssignee = this.repository.create(createTaskAssigneeDto);
       return this.repository.save(taskAssignee);
