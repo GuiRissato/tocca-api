@@ -12,6 +12,7 @@ import { ColumnsKeyResultModule } from './columns_key_result/columns_key_result.
 import { TasksModule } from './tasks/tasks.module';
 import { TaskAssigneesModule } from './task_assingees/task_assignee.module';
 import { CommentsModule } from './comments/comments.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CommentsModule } from './comments/comments.module';
     TasksModule,
     TaskAssigneesModule,
     CommentsModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
