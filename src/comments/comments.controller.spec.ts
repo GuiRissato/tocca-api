@@ -75,7 +75,7 @@ describe('CommentsController', () => {
 
       jest.spyOn(service, 'create').mockRejectedValue(new Error(errorMessage));
 
-      await expect(controller.create(createCommentDto)).rejects.toThrowError(errorMessage);
+      await expect(controller.create(createCommentDto)).rejects.toThrow(errorMessage);
     });
   });
 
