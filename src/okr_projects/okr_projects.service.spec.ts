@@ -68,6 +68,15 @@ describe('OkrProjectsService', () => {
         updated_at: new Date(),
         company: new Company(),
       },
+      {
+        id: 2,
+        company_id: companyId,
+        project_name: 'Project 2',
+        description: 'project 2',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: new Company(),
+      },
     ];
 
     jest.spyOn(repository, 'find').mockResolvedValue(mockOkrProjects);
@@ -98,7 +107,7 @@ describe('OkrProjectsService', () => {
   });
 
   it('should update an OKR project', async () => {
-    const id = 1; // Example OKR project ID
+    const id = 1;
     const updateDto: UpdateOkrProjectDto = {
       description: 'teste 1',
     };
@@ -123,7 +132,7 @@ describe('OkrProjectsService', () => {
   it('should remove an OKR project', async () => {
     const id = 1; // Example OKR project ID
     const companyId = 1;
-    const mockOkrProject = {
+    const mockOkrProject: OkrProject = {
       id: 1,
       company_id: companyId,
       project_name: 'Project 1',

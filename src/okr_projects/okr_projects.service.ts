@@ -67,9 +67,12 @@ export class OkrProjectsService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<OkrProject> {
     try {
       const okrProject = await this.findOne(id);
+      if(!okrProject){
+        throw new NotFoundException(`Okr project ${id} not found`);
+      }
       return this.repository.remove(okrProject);
     } catch (error) {
       console.error('error delenting okr project', error.message);
