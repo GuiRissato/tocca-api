@@ -13,6 +13,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { TaskAssigneesModule } from './task_assingees/task_assignee.module';
 import { CommentsModule } from './comments/comments.module';
 import { TagsModule } from './tags/tags.module';
+import { TaskTagsModule } from './task_tags/task_tags.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TagsModule } from './tags/tags.module';
     TaskAssigneesModule,
     CommentsModule,
     TagsModule,
+    TaskTagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
