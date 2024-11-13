@@ -28,7 +28,7 @@ export class TaskAssigneesService {
       return taskAssignees;
     } catch (error) {
       console.error('Error retrieving task assignees', error.message);
-      throw new Error('Error retrieving task assignees');
+      throw new Error('Error retrieving task assignees ' + error.message);
     }
   }
 
@@ -41,7 +41,7 @@ export class TaskAssigneesService {
       return taskAssignee;
     } catch (error) {
       console.error('Error finding task assignee', error.message);
-      throw new NotFoundException('Error finding task assignee');
+      throw new NotFoundException('Error finding task assignee ' + error.message);
     }
   }
 
@@ -60,7 +60,7 @@ export class TaskAssigneesService {
     return this.repository.save(taskAssignee);
   } catch (error) {
     console.error('Error updating task assignee', error.message);
-    throw new NotFoundException(error.message);
+    throw new NotFoundException('Error updating task assignee ' + error.message);
   }
 }
 

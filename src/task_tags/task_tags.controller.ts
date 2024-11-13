@@ -12,23 +12,24 @@ export class TaskTagsController {
     return this.taskTagsService.create(createTaskTagDto);
   }
 
-  @Get()
-  findAll() {
-    return this.taskTagsService.findAll();
+  @Get(':taskId')
+  findAll(@Param('taskId') taskId: number) {
+    return this.taskTagsService.findAll(taskId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.taskTagsService.findOne(+id);
+  @Get(':tasId/:tagId')
+  findOne( tasId: number, tagId: number) {
+    return this.taskTagsService.findOne(tasId, tagId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskTagDto: UpdateTaskTagDto) {
-    return this.taskTagsService.update(+id, updateTaskTagDto);
+  @Patch('tasId/:tagId')
+  update( tasId: number, tagId: number, updateTaskTagDto: UpdateTaskTagDto) {
+    return this.taskTagsService.update(tasId, tagId, updateTaskTagDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.taskTagsService.remove(+id);
+  @Delete(':tasId/:tagId') 
+  remove(@Param('tasId') tasId: number, @Param('tagId') tagId: number) {
+    return this.taskTagsService.remove(tasId, tagId);
   }
+  
 }
