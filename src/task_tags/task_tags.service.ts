@@ -68,7 +68,7 @@ export class TaskTagsService {
        if (!taskTag) {
          throw new NotFoundException(`Task tag with id ${taskId} - ${tagId} not found`);
        }
-       this.repository.delete(taskTag);
+        return  this.repository.remove(taskTag);
      } catch (error) {
        console.error( 'Error removing task tag', error.message );
        throw new Error( 'Error removing task tag ' + error.message );
