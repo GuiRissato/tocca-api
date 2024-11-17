@@ -1,4 +1,5 @@
 import { Company } from '../../companies/entities/company.entity';
+import { Role } from '../../roles/entities/role.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -35,6 +36,10 @@ export class User {
 
   @Column()
   role_id: number;
+
+  @ManyToOne(() => Role)
+  @JoinColumn({name: 'role_id'})
+  role: Role;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

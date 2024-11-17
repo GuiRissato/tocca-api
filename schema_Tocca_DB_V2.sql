@@ -106,10 +106,10 @@ create table task_tags (
 
 create table roles (  
     id int8 generated always as identity primary key,  
-    role_name varchar(50) not null,  
+    role_name varchar(50) not null,
+    company_id int8 references companies(id),
     created_at timestamptz default current_timestamp,  
     updated_at timestamptz default current_timestamp,  
-    unique (role_name)  
 );  
 
 alter table users 

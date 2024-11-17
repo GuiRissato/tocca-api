@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TaskTagsService } from './task_tags.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TaskTag } from './entities/task_tag.entity';
-import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateTaskTagDto } from './dto/create-task_tag.dto';
 import { Tag } from '../tags/entities/tag.entity';

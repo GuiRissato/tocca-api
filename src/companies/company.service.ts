@@ -57,7 +57,7 @@ export class CompanyService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<Company> {
     try {
       const company = await this.findOne(id);
       return this.repository.remove(company);

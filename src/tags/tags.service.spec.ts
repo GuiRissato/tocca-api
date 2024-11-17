@@ -3,7 +3,6 @@ import { TagsService } from './tags.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tag } from './entities/tag.entity';
-import { NotFoundException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { Company } from '../companies/entities/company.entity';
 import { UpdateTagDto } from './dto/update-tag.dto';

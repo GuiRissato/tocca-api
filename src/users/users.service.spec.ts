@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Company } from '../companies/entities/company.entity';
+import { Role } from '../roles/entities/role.entity';
 
 const mockUserRepository = {
   create: jest.fn(),
@@ -53,8 +54,9 @@ describe('UsersService', () => {
         id: 1,
         ...createUserDto,
         company: new Company(),
-        created_at: undefined,
-        updated_at: undefined,
+        role: new Role(),
+        created_at: new Date(),
+        updated_at: new Date(),
       };
 
       mockUserRepository.create.mockReturnValue(user);
@@ -75,17 +77,20 @@ describe('UsersService', () => {
           id: 1,
           username: 'Test User',
           company: new Company(),
+          role: new Role(),
           created_at: new Date(),
           updated_at: new Date(),
           company_id: 0,
           email: '',
           password: '',
           role_id: 0,
+          
         },
         {
           id: 2,
           username: 'Test User 2',
           company: new Company(),
+          role: new Role(),
           created_at: new Date(),
           updated_at: new Date(),
           company_id: 0,
@@ -110,6 +115,7 @@ describe('UsersService', () => {
         username: 'Test User',
         company_id: 0,
         company: new Company(),
+        role: new Role(),
         email: '',
         password: '',
         role_id: 0,
