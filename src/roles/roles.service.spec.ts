@@ -120,8 +120,22 @@ describe('RolesService', () => {
 
   describe('update', () => {
     it('should update a role', async () => {
-        
-    
+      const roleId = 1;
+
+      const updateRole: UpdateRoleDto = { role_name: 'admin' };
+
+      const updatedRole: Role = {
+        id: roleId,
+        role_name: updateRole.role_name,
+        company: new Company(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      jest.spyOn(repository, 'preload').mockResolvedValue(updatedRole);
+      jest.spyOn(repository, 'save').mockResolvedValue(updatedRole);
+
+      expect(await service.update(roleId, updateRole)).toEqual(updatedRole);
     });
 
     it('should throw a NotFoundException if role is not found', async () => {
