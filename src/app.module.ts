@@ -15,6 +15,8 @@ import { CommentsModule } from './comments/comments.module';
 import { TagsModule } from './tags/tags.module';
 import { TaskTagsModule } from './task_tags/task_tags.module';
 import { RolesModule } from './roles/roles.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -41,6 +43,11 @@ import { RolesModule } from './roles/roles.module';
     TagsModule,
     TaskTagsModule,
     RolesModule,
+    AuthModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET, // Use uma chave secreta segura
+      signOptions: { expiresIn: '24h' }, // Define o tempo de expiração do token
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

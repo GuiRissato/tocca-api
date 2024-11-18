@@ -1,19 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly repository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const user = this.repository.create(createUserDto);
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 15);
+      const user = this.repository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
       return this.repository.save(user);
     } catch (error) {
       console.error('error creating user', error.message);
@@ -69,5 +77,24 @@ export class UsersService {
       console.error('error deleting user', error.message);
       throw new NotFoundException(error.message);
     }
+  }
+
+  async login(loginUserDto: LoginUserDto): Promise<{ user: User, token: string }> {
+    const { username, password } = loginUserDto;
+    const user = await this.repository.findOne({ where: { username } });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { username: user.username, sub: user.id };
+    const token = this.jwtService.sign(payload);
+
+    return { user, token };
   }
 }
