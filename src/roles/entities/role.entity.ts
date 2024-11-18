@@ -17,6 +17,9 @@ export class Role {
   @Column()
   role_name: string;
 
+  @Column()
+  company_id: number;
+
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;

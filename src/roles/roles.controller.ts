@@ -12,9 +12,9 @@ export class RolesController {
     return this.rolesService.create(createRoleDto);
   }
 
-  @Get()
-  findAll() {
-    return this.rolesService.findAll();
+  @Get(':companyId')
+  findAll(@Param('companyId') companyId: number) {
+    return this.rolesService.findAll(companyId);
   }
 
   @Get(':id')
@@ -23,12 +23,12 @@ export class RolesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    return this.rolesService.update(+id, updateRoleDto);
+  update(@Param('id') id: number, @Body() updateRoleDto: UpdateRoleDto) {
+    return this.rolesService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rolesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.rolesService.remove(id);
   }
 }

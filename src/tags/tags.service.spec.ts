@@ -63,14 +63,14 @@ describe('TagsService', () => {
     const mockTags: Tag[] = [{
       id: 1, tag_name: 'Test Tag', company_id: companyId,
       company: new Company(),
-      created_at: undefined,
-      updated_at: undefined
+      created_at: new Date(),
+      updated_at: new Date()
     },
     {
       id: 2, tag_name: 'Test Tag 2', company_id: companyId,
       company: new Company(),
-      created_at: undefined,
-      updated_at: undefined
+      created_at: new Date(),
+      updated_at: new Date()
     }];
 
     jest.spyOn(repository, 'find').mockResolvedValue(mockTags);
@@ -95,8 +95,8 @@ describe('TagsService', () => {
       const mockTag:Tag = {
         id: tagId, tag_name: 'Test Tag', company_id: 1,
         company: new Company(),
-        created_at: undefined,
-        updated_at: undefined
+        created_at: new Date(),
+        updated_at: new Date()
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockTag);

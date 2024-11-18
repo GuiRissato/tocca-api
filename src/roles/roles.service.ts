@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -8,40 +8,50 @@ import { Role } from './entities/role.entity';
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectRepository(Role) private readonly repository: Repository<Role>,
+    @InjectRepository(Role) private repository: Repository<Role>,
   ) {}
 
-  create(createRoleDto: CreateRoleDto): Promise<Role> {
+  async create(createRoleDto: CreateRoleDto): Promise<Role> {
     try {
-      const role = this.repository.create(createRoleDto);
-      return this.repository.save(role);
+      const newRole = this.repository.create(createRoleDto);
+      return await this.repository.save(newRole);
     } catch (error) {
-      console.error('error creating new role', error.message);
-      throw 'error creating new role' + error.message;
+      console.error('Error creating new role', error.message);
+      throw new BadRequestException('Error creating new role: ' + error.message);
     }
   }
 
   async findAll(companyId: number): Promise<Role[]> {
     try {
       const roles = await this.repository.find({
-        where: { company: { id: companyId } },
+        where: { company_id: companyId },
       });
+
+      if (roles.length === 0) {
+        throw new NotFoundException('No roles found');
+      }
+
       return roles;
     } catch (error) {
       console.error('Error finding roles by company_id', error.message);
-      throw new NotFoundException(
-        'Roles not found for the given company_id' + error.message,
+      throw new Error(
+        'Roles not found for the given company_id ' + error.message,
       );
     }
   }
 
-  findOne(id: number): Promise<Role> {
+  async findOne(id: number): Promise<Role> {
     try {
-      const role = this.repository.findOne({ where: { id } });
+      const role = await this.repository.findOne({ where: { id: id } });
+
+      if (!role) {
+        throw new NotFoundException(`Role with id ${id} not found`);
+      }
+    
       return role;
     } catch (error) {
       console.error('error finding role', error.message);
-      throw new NotFoundException('Role not found' + error.message);
+      throw new Error('Failed to retrieve the role');
     }
   }
 
@@ -57,7 +67,7 @@ export class RolesService {
       return this.repository.save(role);
     } catch (error) {
       console.error('error updating role', error.message);
-      throw new NotFoundException('Error updating role' + error.message);
+      throw new Error('Error updating role ' + error.message);
     }
   }
 
@@ -71,7 +81,7 @@ export class RolesService {
       return this.repository.remove(role);
     } catch (error) {
       console.error('error deleting role', error.message);
-      throw new NotFoundException('Error deleting role' + error.message);
+      throw new Error('Error deleting role ' + error.message);
     }
   }
 }
