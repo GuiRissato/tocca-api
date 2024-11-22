@@ -8,6 +8,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Company } from '../companies/entities/company.entity';
 import { Role } from '../roles/entities/role.entity';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt'; // Import bcrypt
+
+jest.mock('bcrypt'); // Mock bcrypt
 
 const mockUserRepository = {
   create: jest.fn(),
@@ -16,6 +20,10 @@ const mockUserRepository = {
   findOne: jest.fn(),
   preload: jest.fn(),
   remove: jest.fn(),
+};
+
+const mockJwtService = {
+  sign: jest.fn().mockReturnValue('mockToken'), // Mock implementation of sign method
 };
 
 describe('UsersService', () => {
@@ -29,6 +37,10 @@ describe('UsersService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
         },
       ],
     }).compile();
@@ -50,21 +62,28 @@ describe('UsersService', () => {
         password: 'password',
         role_id: 1,
       };
+      const hashedPassword = '$2b$15$tWe.F6bqCOA9ulmrd9VUbuD48gN8Z/i83anwyTYI3fkQgGVELnz22';
       const user: User = {
         id: 1,
         ...createUserDto,
+        password: hashedPassword, // Use the hashed password
         company: new Company(),
         role: new Role(),
         created_at: new Date(),
         updated_at: new Date(),
       };
 
+      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword); // Mock bcrypt.hash
+
       mockUserRepository.create.mockReturnValue(user);
       mockUserRepository.save.mockResolvedValue(user);
 
       const result = await service.create(createUserDto);
 
-      expect(mockUserRepository.create).toHaveBeenCalledWith(createUserDto);
+      expect(mockUserRepository.create).toHaveBeenCalledWith({
+        ...createUserDto,
+        password: hashedPassword, // Expect the hashed password
+      });
       expect(mockUserRepository.save).toHaveBeenCalledWith(user);
       expect(result).toEqual(user);
     });
