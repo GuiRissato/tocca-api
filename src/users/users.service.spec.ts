@@ -9,9 +9,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Company } from '../companies/entities/company.entity';
 import { Role } from '../roles/entities/role.entity';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt'; // Import bcrypt
+import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
-jest.mock('bcrypt'); // Mock bcrypt
+jest.mock('bcrypt'); 
 
 const mockUserRepository = {
   create: jest.fn(),
@@ -23,7 +25,7 @@ const mockUserRepository = {
 };
 
 const mockJwtService = {
-  sign: jest.fn().mockReturnValue('mockToken'), // Mock implementation of sign method
+  sign: jest.fn().mockReturnValue('mockToken'),
 };
 
 describe('UsersService', () => {
@@ -66,14 +68,14 @@ describe('UsersService', () => {
       const user: User = {
         id: 1,
         ...createUserDto,
-        password: hashedPassword, // Use the hashed password
+        password: hashedPassword,
         company: new Company(),
         role: new Role(),
         created_at: new Date(),
         updated_at: new Date(),
       };
 
-      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword); // Mock bcrypt.hash
+      (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
 
       mockUserRepository.create.mockReturnValue(user);
       mockUserRepository.save.mockResolvedValue(user);
@@ -82,7 +84,7 @@ describe('UsersService', () => {
 
       expect(mockUserRepository.create).toHaveBeenCalledWith({
         ...createUserDto,
-        password: hashedPassword, // Expect the hashed password
+        password: hashedPassword,
       });
       expect(mockUserRepository.save).toHaveBeenCalledWith(user);
       expect(result).toEqual(user);
@@ -206,6 +208,40 @@ describe('UsersService', () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(service.remove(2)).rejects.toThrow('User 2 not found');
+    });
+  });
+
+  describe('login', () => {
+    it('should return a user and token on successful login', async () => {
+      const loginUserDto: LoginUserDto = { username: 'test', password: 'password' };
+      const user: User = {
+        id: 1,
+        username: 'test',
+        email: 'test@example.com',
+        password: '$2b$15$tWe.F6bqCOA9ulmrd9VUbuD48gN8Z/i83anwyTYI3fkQgGVELnz22',
+        company_id: 1,
+        role_id: 1,
+        company: new Company(),
+        role: new Role(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockUserRepository.findOne.mockResolvedValue(user);
+
+      const result = await service.login(loginUserDto);
+
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { username: 'test' } });
+      expect(result).toEqual({ user, token: 'mockToken' });
+    });
+
+    it('should throw UnauthorizedException if credentials are invalid', async () => {
+      const loginUserDto: LoginUserDto = { username: 'test', password: 'wrongpassword' };
+
+      mockUserRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.login(loginUserDto)).rejects.toThrow('Error login');
     });
   });
 });

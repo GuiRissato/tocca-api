@@ -80,21 +80,26 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDto): Promise<{ user: User, token: string }> {
-    const { username, password } = loginUserDto;
-    const user = await this.repository.findOne({ where: { username } });
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+    try {
+      const { username, password } = loginUserDto;
+      const user = await this.repository.findOne({ where: { username } });
+  
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+  
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+  
+      const payload = { username: user.username, sub: user.id };
+      const token = this.jwtService.sign(payload);
+      console.log({user,token})
+      return { user, token };
+    } catch (error) {
+      console.error('Error login ', error.message)
+      throw new Error('Error login')
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const payload = { username: user.username, sub: user.id };
-    const token = this.jwtService.sign(payload);
-
-    return { user, token };
   }
 }
