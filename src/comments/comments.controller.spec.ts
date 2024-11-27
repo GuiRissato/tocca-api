@@ -3,10 +3,10 @@ import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Comment } from './entities/comment.entity';
+import { Comments } from './entities/comment.entity';
 import { NotFoundException } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
-import { Task } from '../tasks/entities/task.entity';
+import { Users } from '../users/entities/user.entity';
+import { Tasks } from '../tasks/entities/task.entity';
 
 const mockCommentsService = {
   create: jest.fn(),
@@ -48,11 +48,11 @@ describe('CommentsController', () => {
         user_id: 1,
         commet_text: 'New comment text',
       };
-      const createdComment: Comment = {
+      const createdComment: Comments = {
         task_id: 1,
-        task: new Task(),
+        task: new Tasks(),
         user_id: 1,
-        user: new User(),
+        user: new Users(),
         commet_text: 'New comment text',
         created_at: new Date(),
         updated_at: new Date(),
@@ -83,11 +83,11 @@ describe('CommentsController', () => {
     it('should find a specific comment', async () => {
       const taskId = 1;
       const userId = 1;
-      const comment: Comment = {
+      const comment: Comments = {
         task_id: 0,
-        task: new Task(),
+        task: new Tasks(),
         user_id: 0,
-        user: new User(),
+        user: new Users(),
         commet_text: '',
         created_at: undefined,
         updated_at: undefined
@@ -117,11 +117,11 @@ describe('CommentsController', () => {
       const updateCommentDto: UpdateCommentDto = {
         commet_text: 'comentario 2'
       };
-      const updatedComment: Comment = {
+      const updatedComment: Comments = {
         task_id: 0,
-        task: new Task(),
+        task: new Tasks(),
         user_id: 0,
-        user: new User(),
+        user: new Users(),
         commet_text: '',
         created_at: undefined,
         updated_at: undefined
@@ -151,11 +151,11 @@ describe('CommentsController', () => {
     it('should remove a comment', async () => {
       const taskId = 1;
       const userId = 1;
-      const removedComment: Comment = {
+      const removedComment: Comments = {
         task_id: 0,
-        task: new Task,
+        task: new Tasks(),
         user_id: 0,
-        user: new User,
+        user: new Users(),
         commet_text: '',
         created_at: undefined,
         updated_at: undefined

@@ -2,18 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateColumnsKeyResultDto } from './dto/create-columns_key_result.dto';
 import { UpdateColumnsKeyResultDto } from './dto/update-columns_key_result.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ColumnsKeyResult } from './entities/columns_key_result.entity';
+import { ColumnsKeyResults } from './entities/columns_key_result.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class ColumnsKeyResultService {
   constructor(
-    @InjectRepository(ColumnsKeyResult)
-    private readonly repository: Repository<ColumnsKeyResult>,
+    @InjectRepository(ColumnsKeyResults)
+    private readonly repository: Repository<ColumnsKeyResults>,
   ) {}
   create(
     createColumnsKeyResultDto: CreateColumnsKeyResultDto,
-  ): Promise<ColumnsKeyResult> {
+  ): Promise<ColumnsKeyResults> {
     try {
       const columnKeyResult = this.repository.create(createColumnsKeyResultDto);
       return this.repository.save(columnKeyResult);
@@ -23,7 +23,7 @@ export class ColumnsKeyResultService {
     }
   }
 
-  findAll(keyResultId: number): Promise<ColumnsKeyResult[]> {
+  findAll(keyResultId: number): Promise<ColumnsKeyResults[]> {
     try {
       const allColumnsByKeyResult = this.repository.find({
         where: { key_result_id: keyResultId },
@@ -35,7 +35,7 @@ export class ColumnsKeyResultService {
     }
   }
 
-  findOne(id: number): Promise<ColumnsKeyResult> {
+  findOne(id: number): Promise<ColumnsKeyResults> {
     try {
       const findOneColumn = this.repository.findOne({ where: { id } });
       return findOneColumn;
@@ -48,7 +48,7 @@ export class ColumnsKeyResultService {
   async update(
     id: number,
     updateColumnsKeyResultDto: UpdateColumnsKeyResultDto,
-  ): Promise<ColumnsKeyResult> {
+  ): Promise<ColumnsKeyResults> {
     try {
       const columnKeyResult = await this.repository.preload({
         id: id,

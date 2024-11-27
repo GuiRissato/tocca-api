@@ -1,4 +1,4 @@
-import { OkrProject } from '../../okr_projects/entities/okr_project.entity';
+import { OkrProjects } from '../../okr_projects/entities/okr_project.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,16 +10,16 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Objective {
+export class Objectives {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   project_id: number;
 
-  @ManyToOne(() => OkrProject)
+  @ManyToOne(() => OkrProjects)
   @JoinColumn({ name: 'project_id' })
-  project: OkrProject;
+  project: OkrProjects;
 
   @Column()
   objective_name: string;

@@ -1,5 +1,5 @@
-import { ColumnsKeyResult } from "../../columns_key_result/entities/columns_key_result.entity";
-import { KeyResult } from "../../key_results/entities/key_result.entity";
+import { ColumnsKeyResults } from "../../columns_key_result/entities/columns_key_result.entity";
+import { KeyResults } from "../../key_results/entities/key_result.entity";
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -11,16 +11,16 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Task {
+export class Tasks {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     key_result_id: number;
 
-    @ManyToOne(() => KeyResult)
+    @ManyToOne(() => KeyResults)
     @JoinColumn({name: 'key_result_id'})
-    keyResultId: KeyResult;
+    keyResultId: KeyResults;
 
     @Column()
     task_name: string;
@@ -40,9 +40,9 @@ export class Task {
     @Column()
     column_key_result_id: number;
 
-    @ManyToOne(() => ColumnsKeyResult)
+    @ManyToOne(() => ColumnsKeyResults)
     @JoinColumn({name: 'column_key_result_id'})
-    columnKeyResultId: ColumnsKeyResult;    
+    columnKeyResultId: ColumnsKeyResults;    
 
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;

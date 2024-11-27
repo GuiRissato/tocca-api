@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KeyResultsService } from './key_results.service';
 import { Repository } from 'typeorm';
-import { KeyResult } from './entities/key_result.entity';
+import { KeyResults } from './entities/key_result.entity';
 import { CreateKeyResultDto } from './dto/create-key_result.dto';
 import { UpdateKeyResultDto } from './dto/update-key_result.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Objective } from '../objectives/entities/objective.entity';
+import { Objectives } from '../objectives/entities/objective.entity';
 
 const mockKeyResultsRepository = {
   create: jest.fn(),
@@ -18,22 +18,22 @@ const mockKeyResultsRepository = {
 
 describe('KeyResultsService', () => {
   let service: KeyResultsService;
-  let repository: Repository<KeyResult>;
+  let repository: Repository<KeyResults>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KeyResultsService,
         {
-          provide: getRepositoryToken(KeyResult),
+          provide: getRepositoryToken(KeyResults),
           useValue: mockKeyResultsRepository,
         },
       ],
     }).compile();
 
     service = module.get<KeyResultsService>(KeyResultsService);
-    repository = module.get<Repository<KeyResult>>(
-      getRepositoryToken(KeyResult),
+    repository = module.get<Repository<KeyResults>>(
+      getRepositoryToken(KeyResults),
     );
   });
 
@@ -52,12 +52,12 @@ describe('KeyResultsService', () => {
         end_date: new Date(),
       };
 
-      const createdKeyResult: KeyResult = {
+      const createdKeyResult: KeyResults = {
         id: 1,
         ...createKeyResultDto,
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       mockKeyResultsRepository.create.mockReturnValue(createKeyResultDto);
@@ -78,7 +78,7 @@ describe('KeyResultsService', () => {
   describe('findAll', () => {
     it('should find all key results by objective ID', async () => {
       const objectiveId = 1;
-      const mockKeyResults = [
+      const mockKeyResults: KeyResults[] = [
         {
           id: 1,
           objective_id: objectiveId,
@@ -89,7 +89,7 @@ describe('KeyResultsService', () => {
           end_date: new Date(),
           created_at: new Date(),
           updated_at: new Date(),
-          objective: new Objective(),
+          objective: new Objectives(),
         },
         {
           id: 2,
@@ -101,7 +101,7 @@ describe('KeyResultsService', () => {
           end_date: new Date(),
           created_at: new Date(),
           updated_at: new Date(),
-          objective: new Objective(),
+          objective: new Objectives(),
         },
       ];
 
@@ -119,7 +119,7 @@ describe('KeyResultsService', () => {
   describe('findOne', () => {
     it('should find one key result by ID', async () => {
       const keyResultId = 1;
-      const mockKeyResult = {
+      const mockKeyResult: KeyResults = {
         id: keyResultId,
         objective_id: 1,
         key_result_name: 'Example Key Result',
@@ -129,7 +129,7 @@ describe('KeyResultsService', () => {
         end_date: new Date(),
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockKeyResult);
@@ -154,7 +154,7 @@ describe('KeyResultsService', () => {
         end_date: new Date('2022-12-31'),
       };
 
-      const existingKeyResult: KeyResult = {
+      const existingKeyResult: KeyResults = {
         id: keyResultId,
         objective_id: 1,
         key_result_name: 'Existing Key Result',
@@ -164,10 +164,10 @@ describe('KeyResultsService', () => {
         end_date: new Date('2022-06-30'),
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
-      const updatedKeyResult: KeyResult = {
+      const updatedKeyResult: KeyResults = {
         id: keyResultId,
         objective_id: 1,
         key_result_name: updateKeyResultDto.key_result_name || '',
@@ -192,7 +192,7 @@ describe('KeyResultsService', () => {
   describe('remove', () => {
     it('should remove a key result', async () => {
       const keyResultId = 1;
-      const mockKeyResult = {
+      const mockKeyResult: KeyResults = {
         id: keyResultId,
         objective_id: 1,
         key_result_name: 'Example Key Result',
@@ -202,7 +202,7 @@ describe('KeyResultsService', () => {
         end_date: new Date(),
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockKeyResult);

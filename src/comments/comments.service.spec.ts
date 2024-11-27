@@ -1,31 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsService } from './comments.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Comment } from './entities/comment.entity';
+import { Comments } from './entities/comment.entity';
 import { NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { User } from '../users/entities/user.entity';
-import { Task } from '../tasks/entities/task.entity';
+import { Users } from '../users/entities/user.entity';
+import { Tasks } from '../tasks/entities/task.entity';
 
 describe('CommentsService', () => {
   let service: CommentsService;
-  let repository: Repository<Comment>;
+  let repository: Repository<Comments>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommentsService,
         {
-          provide: getRepositoryToken(Comment),
+          provide: getRepositoryToken(Comments),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<CommentsService>(CommentsService);
-    repository = module.get<Repository<Comment>>(getRepositoryToken(Comment));
+    repository = module.get<Repository<Comments>>(
+      getRepositoryToken(Comments),
+    );
   });
 
   it('should be defined', () => {
@@ -39,11 +41,11 @@ describe('CommentsService', () => {
         user_id: 1,
         commet_text: 'comentario 1'
       };
-      const mockComment: Comment = {
+      const mockComment: Comments = {
         task_id: 0,
-        task: new Task(),
+        task: new Tasks(),
         user_id: 0,
-        user: new User(),
+        user: new Users(),
         commet_text: '',
         created_at: undefined,
         updated_at: undefined
@@ -67,7 +69,7 @@ describe('CommentsService', () => {
       };
       const error = new Error('Database connection error');
 
-      jest.spyOn(repository, 'create').mockReturnValue({} as Comment);
+      jest.spyOn(repository, 'create').mockReturnValue({} as Comments);
       jest.spyOn(repository, 'save').mockRejectedValue(error);
 
       await expect(service.create(createCommentDto)).rejects.toThrow('Database connection error');
@@ -77,9 +79,9 @@ describe('CommentsService', () => {
   describe('findAll', () => {
     it('should find and return all comments for a specific task', async () => {
       const taskId = 1;
-      const mockComments: Comment[] = [
-        { task_id: taskId, user_id: 1, task: new Task(), user: new User(), commet_text: 'Comment 1', created_at: new Date(), updated_at: new Date() },
-        { task_id: taskId, user_id: 2, task: new Task(), user: new User(), commet_text: 'Comment 2', created_at: new Date(), updated_at: new Date() }
+      const mockComments: Comments[] = [
+        { task_id: taskId, user_id: 1, task: new Tasks(), user: new Users(), commet_text: 'Comment 1', created_at: new Date(), updated_at: new Date() },
+        { task_id: taskId, user_id: 2, task: new Tasks(), user: new Users(), commet_text: 'Comment 2', created_at: new Date(), updated_at: new Date() }
       ];
 
       jest.spyOn(repository, 'find').mockResolvedValue(mockComments);
@@ -104,11 +106,11 @@ describe('CommentsService', () => {
     it('should find and return a specific comment for a task and user', async () => {
       const taskId = 1;
       const userId = 1;
-      const mockComment: Comment = {
+      const mockComment: Comments = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         commet_text: 'Comment 1',
         created_at: new Date(),
         updated_at: new Date()
@@ -150,11 +152,11 @@ describe('CommentsService', () => {
       const updateCommentDto: UpdateCommentDto = {
         commet_text: 'Updated comment'
       };
-      const mockComment: Comment = {
+      const mockComment: Comments = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         commet_text: 'Comment 1',
         created_at: new Date(),
         updated_at: new Date()
@@ -205,11 +207,11 @@ describe('CommentsService', () => {
     it('should remove a specific comment for a task and user', async () => {
       const taskId = 1;
       const userId = 1;
-      const mockComment: Comment = {
+      const mockComment: Comments = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         commet_text: 'Comment 1',
         created_at: new Date(),
         updated_at: new Date()

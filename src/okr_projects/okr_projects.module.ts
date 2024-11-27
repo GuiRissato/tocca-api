@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { OkrProjectsService } from './okr_projects.service';
 import { OkrProjectsController } from './okr_projects.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OkrProject } from './entities/okr_project.entity';
+import { OkrProjects } from './entities/okr_project.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OkrProject])],
+  imports: [TypeOrmModule.forFeature([OkrProjects])],
   controllers: [OkrProjectsController],
   providers: [OkrProjectsService],
 })

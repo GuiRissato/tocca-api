@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOkrProjectDto } from './dto/create-okr_project.dto';
 import { UpdateOkrProjectDto } from './dto/update-okr_project.dto';
-import { OkrProject } from './entities/okr_project.entity';
+import { OkrProjects } from './entities/okr_project.entity';
 
 @Injectable()
 export class OkrProjectsService {
   constructor(
-    @InjectRepository(OkrProject)
-    private readonly repository: Repository<OkrProject>,
+    @InjectRepository(OkrProjects)
+    private readonly repository: Repository<OkrProjects>,
   ) {}
-  create(createOkrProjectDto: CreateOkrProjectDto): Promise<OkrProject> {
+  create(createOkrProjectDto: CreateOkrProjectDto): Promise<OkrProjects> {
     try {
       const okrProject = this.repository.create(createOkrProjectDto);
       return this.repository.save(okrProject);
@@ -21,7 +21,7 @@ export class OkrProjectsService {
     }
   }
 
-  findAll(companyId: number): Promise<OkrProject[]> {
+  findAll(companyId: number): Promise<OkrProjects[]> {
     try {
       const allOkrProjectsByCompany = this.repository.find({
         where: { company_id: companyId },
@@ -36,7 +36,7 @@ export class OkrProjectsService {
     }
   }
 
-  findOne(id: number): Promise<OkrProject> {
+  findOne(id: number): Promise<OkrProjects> {
     try {
       const findOneOkrProject = this.repository.findOne({ where: { id } });
       return findOneOkrProject;
@@ -49,7 +49,7 @@ export class OkrProjectsService {
   async update(
     id: number,
     updateOkrProjectDto: UpdateOkrProjectDto,
-  ): Promise<OkrProject> {
+  ): Promise<OkrProjects> {
     try {
       const okrProject = await this.repository.preload({
         id: id,
@@ -67,7 +67,7 @@ export class OkrProjectsService {
     }
   }
 
-  async remove(id: number): Promise<OkrProject> {
+  async remove(id: number): Promise<OkrProjects> {
     try {
       const okrProject = await this.findOne(id);
       if(!okrProject){

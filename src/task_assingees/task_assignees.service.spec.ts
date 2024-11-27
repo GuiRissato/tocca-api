@@ -1,32 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskAssigneesService } from './task_assignees.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TaskAssignee } from './entities/task_assignee.entity';
-import { NotFoundException } from '@nestjs/common';
+import { TaskAssignees } from './entities/task_assignee.entity';
 import { Repository } from 'typeorm';
 import { CreateTaskAssigneeDto } from './dto/create-task_assignee.dto';
-import { User } from '../users/entities/user.entity';
-import { Task } from '../tasks/entities/task.entity';
+import { Users } from '../users/entities/user.entity';
+import { Tasks } from '../tasks/entities/task.entity';
 import { UpdateTaskAssigneeDto } from './dto/update-task_assignee.dto';
 
 describe('TaskAssigneesService', () => {
   let service: TaskAssigneesService;
-  let repository: Repository<TaskAssignee>;
+  let repository: Repository<TaskAssignees>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TaskAssigneesService,
         {
-          provide: getRepositoryToken(TaskAssignee),
+          provide: getRepositoryToken(TaskAssignees),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<TaskAssigneesService>(TaskAssigneesService);
-    repository = module.get<Repository<TaskAssignee>>(
-      getRepositoryToken(TaskAssignee),
+    repository = module.get<Repository<TaskAssignees>>(
+      getRepositoryToken(TaskAssignees),
     );
   });
 
@@ -40,10 +39,10 @@ describe('TaskAssigneesService', () => {
         task_id: 1,
         user_id: 1,
       };
-      const mockTaskAssignee: TaskAssignee = {
+      const mockTaskAssignee: TaskAssignees = {
         ...createTaskAssigneeDto,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -65,7 +64,7 @@ describe('TaskAssigneesService', () => {
       };
       const error = new Error('Database connection error');
 
-      jest.spyOn(repository, 'create').mockReturnValue({} as TaskAssignee);
+      jest.spyOn(repository, 'create').mockReturnValue({} as TaskAssignees);
       jest.spyOn(repository, 'save').mockRejectedValue(error);
 
       await expect(service.create(createTaskAssigneeDto)).rejects.toThrow(
@@ -77,20 +76,20 @@ describe('TaskAssigneesService', () => {
   describe('findAll', () => {
     it('should find and return all task assignees for a specific task', async () => {
       const taskId = 1;
-      const mockTaskAssignees: TaskAssignee[] = [
+      const mockTaskAssignees: TaskAssignees[] = [
         {
           task_id: taskId,
           user_id: 1,
-          task: new Task(),
-          user: new User(),
+          task: new Tasks(),
+          user: new Users(),
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
           task_id: taskId,
           user_id: 2,
-          task: new Task(),
-          user: new User(),
+          task: new Tasks(),
+          user: new Users(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -122,11 +121,11 @@ describe('TaskAssigneesService', () => {
     it('should find and return a task assignee for a specific task and user', async () => {
       const taskId = 1;
       const userId = 1;
-      const mockTaskAssignee: TaskAssignee = {
+      const mockTaskAssignee: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -158,11 +157,11 @@ describe('TaskAssigneesService', () => {
       const taskId = 1;
       const userId = 1;
       const updateTaskAssigneeDto: UpdateTaskAssigneeDto = { user_id: 2 };
-      const mockTaskAssignee: TaskAssignee = {
+      const mockTaskAssignee: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         created_at: new Date(),
         updated_at: new Date(),
         ...updateTaskAssigneeDto,
@@ -205,11 +204,11 @@ describe('TaskAssigneesService', () => {
     it('should remove a task assignee', async () => {
       const taskId = 1;
       const userId = 1;
-      const mockTaskAssignee: TaskAssignee = {
+      const mockTaskAssignee: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -245,8 +244,8 @@ describe('TaskAssigneesService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue({
         task_id: taskId,
         user_id: userId,
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
         created_at: new Date(),
         updated_at: new Date(),
       });

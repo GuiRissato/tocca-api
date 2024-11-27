@@ -2,30 +2,29 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RolesService } from './roles.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Role } from './entities/role.entity';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Roles } from './entities/role.entity';
+import { BadRequestException } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { Company } from '../companies/entities/company.entity';
+import { Companies } from '../companies/entities/company.entity';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { mock } from 'node:test';
 
 describe('RolesService', () => {
   let service: RolesService;
-  let repository: Repository<Role>;
+  let repository: Repository<Roles>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RolesService,
         {
-          provide: getRepositoryToken(Role),
+          provide: getRepositoryToken(Roles),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<RolesService>(RolesService);
-    repository = module.get<Repository<Role>>(getRepositoryToken(Role));
+    repository = module.get<Repository<Roles>>(getRepositoryToken(Roles));
   });
 
   afterEach(() => {
@@ -37,15 +36,15 @@ describe('RolesService', () => {
   });
 
   describe('create', () => {
-    it('should create a new role', async () => {
+    it('should create a new Roles', async () => {
       const createRoleDto: CreateRoleDto = {
         role_name: 'Admin',
         company_id: 1,
       };
-      const createRole: Role = {
+      const createRole: Roles = {
         id: 1,
         ...createRoleDto,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -69,12 +68,12 @@ describe('RolesService', () => {
   describe('findAll', () => {
     it('should return an array of roles', async () => {
       const companyId = 1;
-      const mockRoles: Role[] = [
+      const mockRoles: Roles[] = [
         {
           id: 1,
           role_name: 'Admin',
           company_id: companyId,
-          company: new Company(),
+          company: new Companies(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -82,7 +81,7 @@ describe('RolesService', () => {
           id: 2,
           role_name: 'User',
           company_id: companyId,
-          company: new Company(),
+          company: new Companies(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -103,11 +102,11 @@ describe('RolesService', () => {
   describe('findOne', () => {
     it('should return a role', async () => {
       const roleId = 1;
-      const mockRole: Role = {
+      const mockRole: Roles = {
         id: roleId,
         role_name: 'Admin',
         company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -128,11 +127,11 @@ describe('RolesService', () => {
     it('should update a role', async () => {
       const roleId = 1;
       const updateRoleDto: UpdateRoleDto = { role_name: 'Manager' };
-      const updatedRole: Role = {
+      const updatedRole: Roles = {
         id: roleId,
         role_name: 'Manager',
         company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -156,11 +155,11 @@ describe('RolesService', () => {
   describe('remove', () => {
     it('should remove a role', async () => {
       const roleId = 1;
-      const mockRole: Role = {
+      const mockRole: Roles = {
         id: roleId,
         role_name: 'Admin',
         company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };

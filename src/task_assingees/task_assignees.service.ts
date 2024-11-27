@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskAssigneeDto } from './dto/create-task_assignee.dto';
 import { UpdateTaskAssigneeDto } from './dto/update-task_assignee.dto';
-import { TaskAssignee } from './entities/task_assignee.entity';
+import { TaskAssignees } from './entities/task_assignee.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TaskAssigneesService {
   constructor(
-    @InjectRepository(TaskAssignee)
-    private readonly repository: Repository<TaskAssignee>,
+    @InjectRepository(TaskAssignees)
+    private readonly repository: Repository<TaskAssignees>,
   ) {}
 
-  create(createTaskAssigneeDto: CreateTaskAssigneeDto): Promise<TaskAssignee> {
+  create(createTaskAssigneeDto: CreateTaskAssigneeDto): Promise<TaskAssignees> {
     try {
       const taskAssignee = this.repository.create(createTaskAssigneeDto);
       return this.repository.save(taskAssignee);
@@ -22,7 +22,7 @@ export class TaskAssigneesService {
     }
   }
 
-  findAll(taskId: number): Promise<TaskAssignee[]> {
+  findAll(taskId: number): Promise<TaskAssignees[]> {
     try {
       const taskAssignees = this.repository.find({ where: { task_id: taskId}});
       return taskAssignees;
@@ -32,7 +32,7 @@ export class TaskAssigneesService {
     }
   }
 
-  async findOne(taskId: number, userId: number): Promise<TaskAssignee> {
+  async findOne(taskId: number, userId: number): Promise<TaskAssignees> {
     try {
       const taskAssignee = await this.repository.findOne({ where: { task_id: taskId, user_id: userId } });
       if (!taskAssignee) {
@@ -45,7 +45,7 @@ export class TaskAssigneesService {
     }
   }
 
-  async update(taskId: number, userId: number, updateTaskAssigneeDto: UpdateTaskAssigneeDto): Promise<TaskAssignee> {
+  async update(taskId: number, userId: number, updateTaskAssigneeDto: UpdateTaskAssigneeDto): Promise<TaskAssignees> {
   try {
     const taskAssignee = await this.repository.preload({
       task_id: taskId,

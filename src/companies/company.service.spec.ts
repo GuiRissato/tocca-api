@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyService } from './company.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Company } from './entities/company.entity';
+import { Companies } from './entities/company.entity';
 
 const mockCompanyRepository = {
   create: jest.fn(),
@@ -16,21 +16,21 @@ const mockCompanyRepository = {
 
 describe('CompanyService', () => {
   let service: CompanyService;
-  let repository: Repository<Company>;
+  let repository: Repository<Companies>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CompanyService,
         {
-          provide: getRepositoryToken(Company),
+          provide: getRepositoryToken(Companies),
           useValue: mockCompanyRepository,
         },
       ],
     }).compile();
 
     service = module.get<CompanyService>(CompanyService);
-    repository = module.get<Repository<Company>>(getRepositoryToken(Company));
+    repository = module.get<Repository<Companies>>(getRepositoryToken(Companies));
   });
 
   afterEach(() => {

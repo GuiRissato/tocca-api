@@ -1,22 +1,22 @@
 import { Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';"typeorm";
-import { Task } from '../../tasks/entities/task.entity';
-import { Tag } from '../../tags/entities/tag.entity';
+import { Tasks } from '../../tasks/entities/task.entity';
+import { Tags } from '../../tags/entities/tag.entity';
 
 @Entity()
-export class TaskTag {
+export class TaskTags {
     @PrimaryColumn()
      task_id: number;
 
-     @ManyToOne(() => Task)
+     @ManyToOne(() => Tasks)
      @JoinColumn({ name: 'task_id' })
-     task: Task;
+     task: Tasks;
 
      @PrimaryColumn()
      tag_id: number;
 
-     @ManyToOne(() => Tag)
+     @ManyToOne(() => Tags)
      @JoinColumn({ name: 'tag_id' })
-     tag: Tag;
+     tag: Tags;
 
      @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
      created_at: Date;

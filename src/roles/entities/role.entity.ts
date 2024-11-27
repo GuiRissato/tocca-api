@@ -1,4 +1,4 @@
-import { Company } from '../../companies/entities/company.entity';
+import { Companies } from '../../companies/entities/company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Role {
+export class Roles {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,9 +20,9 @@ export class Role {
   @Column()
   company_id: number;
 
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Companies)
   @JoinColumn({ name: 'company_id' })
-  company: Company;
+  company: Companies;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

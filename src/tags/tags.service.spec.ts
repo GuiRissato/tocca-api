@@ -2,28 +2,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TagsService } from './tags.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Tag } from './entities/tag.entity';
+import { Tags } from './entities/tag.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
-import { Company } from '../companies/entities/company.entity';
+import { Companies } from '../companies/entities/company.entity';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 describe('TagsService', () => {
   let service: TagsService;
-  let repository: Repository<Tag>;
+  let repository: Repository<Tags>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TagsService,
         {
-          provide: getRepositoryToken(Tag),
+          provide: getRepositoryToken(Tags),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<TagsService>(TagsService);
-    repository = module.get<Repository<Tag>>(getRepositoryToken(Tag));
+    repository = module.get<Repository<Tags>>(getRepositoryToken(Tags));
   });
 
   it('should be defined', () => {
@@ -33,9 +33,9 @@ describe('TagsService', () => {
   describe('create', () => {
     it('should create a new tag', async () => {
       const createTagDto: CreateTagDto = { tag_name: 'Test Tag', company_id: 1 };
-      const createTag: Tag = {
+      const createTag: Tags = {
         id: 1, ...createTagDto,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date()
       };
@@ -60,15 +60,15 @@ describe('TagsService', () => {
   describe('findAll', () => {
   it('should return an array of tags', async () => {
     const companyId = 1;
-    const mockTags: Tag[] = [{
+    const mockTags: Tags[] = [{
       id: 1, tag_name: 'Test Tag', company_id: companyId,
-      company: new Company(),
+      company: new Companies(),
       created_at: new Date(),
       updated_at: new Date()
     },
     {
       id: 2, tag_name: 'Test Tag 2', company_id: companyId,
-      company: new Company(),
+      company: new Companies(),
       created_at: new Date(),
       updated_at: new Date()
     }];
@@ -92,9 +92,9 @@ describe('TagsService', () => {
   describe('findOne', () => {
     it('should return a tag if found', async () => {
       const tagId = 1;
-      const mockTag:Tag = {
+      const mockTag:Tags = {
         id: tagId, tag_name: 'Test Tag', company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date()
       };
@@ -117,11 +117,11 @@ describe('TagsService', () => {
     it('should update a tag', async () => {
       const tagId = 1;
       const updateTagDto: UpdateTagDto = { tag_name: 'Updated Tag' };
-      const updatedTag: Tag = {
+      const updatedTag: Tags = {
         id: tagId,
         company_id: 1,
         tag_name: '',
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date()
       };
@@ -148,9 +148,9 @@ describe('TagsService', () => {
   describe('remove', () => {
     it('should remove a tag', async () => {
       const tagId = 1;
-      const mockTag: Tag = {
+      const mockTag: Tags = {
         id: tagId, tag_name: 'Test Tag', company_id: 1,
-         company: new Company(),
+         company: new Companies(),
          created_at: new Date(),
          updated_at: new Date()
       };
@@ -163,9 +163,9 @@ describe('TagsService', () => {
 
     it('should throw NotFoundException if tag not found during removal', async () => {
       const tagId = 1;
-      const mockTag: Tag = {
+      const mockTag: Tags = {
         id: 999, tag_name: 'Test Tag', company_id: 1,
-         company: new Company(),
+         company: new Companies(),
          created_at: new Date(),
          updated_at: new Date()
       };

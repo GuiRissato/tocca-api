@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { Company } from './entities/company.entity';
+import { Companies } from './entities/company.entity';
 
 @Injectable()
 export class CompanyService {
   constructor(
-    @InjectRepository(Company) private readonly repository: Repository<Company>,
+    @InjectRepository(Companies) private readonly repository: Repository<Companies>,
   ) {}
-  create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+  create(createCompanyDto: CreateCompanyDto): Promise<Companies> {
     try {
       const company = this.repository.create(createCompanyDto);
       return this.repository.save(company);
@@ -20,7 +20,7 @@ export class CompanyService {
     }
   }
 
-  findAll(): Promise<Company[]> {
+  findAll(): Promise<Companies[]> {
     try {
       const allCompanies = this.repository.find();
       return allCompanies;
@@ -29,7 +29,7 @@ export class CompanyService {
     }
   }
 
-  findOne(id: number): Promise<Company> {
+  findOne(id: number): Promise<Companies> {
     try {
       const findOneCompany = this.repository.findOne({ where: { id } });
       return findOneCompany;
@@ -41,7 +41,7 @@ export class CompanyService {
   async update(
     id: number,
     updateCompanyDto: UpdateCompanyDto,
-  ): Promise<Company> {
+  ): Promise<Companies> {
     try {
       const company = await this.repository.preload({
         id: id,
@@ -57,7 +57,7 @@ export class CompanyService {
     }
   }
 
-  async remove(id: number): Promise<Company> {
+  async remove(id: number): Promise<Companies> {
     try {
       const company = await this.findOne(id);
       return this.repository.remove(company);

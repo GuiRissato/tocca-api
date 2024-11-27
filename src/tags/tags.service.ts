@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Tag } from './entities/tag.entity';
+import { Tags } from './entities/tag.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 @Injectable()
 export class TagsService {
   constructor(
-    @InjectRepository(Tag)
-    private repository: Repository<Tag>,
+    @InjectRepository(Tags)
+    private repository: Repository<Tags>,
   ) {}
 
-  async create(createTagDto: CreateTagDto): Promise<Tag> {
+  async create(createTagDto: CreateTagDto): Promise<Tags> {
     try {
       const newTag = this.repository.create(createTagDto);
       return await this.repository.save(newTag);
@@ -22,7 +22,7 @@ export class TagsService {
     }
   }
 
-  async findAll(companyId: number): Promise<Tag[]> {
+  async findAll(companyId: number): Promise<Tags[]> {
     try {
       return await this.repository.find({
         where: { company_id: companyId },
@@ -33,7 +33,7 @@ export class TagsService {
     }
   }
 
-  async findOne(id: number): Promise<Tag> {
+  async findOne(id: number): Promise<Tags> {
     try {
       const tag = await this.repository.findOne({ where: { id: id}});
       if (!tag) {
@@ -46,7 +46,7 @@ export class TagsService {
     }
   }
 
-  async update(id: number, updateTagDto: UpdateTagDto): Promise<Tag> {
+  async update(id: number, updateTagDto: UpdateTagDto): Promise<Tags> {
     try {
       const updatedTag = await this.repository.preload({id: id, ...updateTagDto});
 
@@ -60,7 +60,7 @@ export class TagsService {
     }
   }
 
-  async remove(id: number): Promise<Tag> {
+  async remove(id: number): Promise<Tags> {
     try {
       const tag = await this.findOne(id);
       if (!tag) {

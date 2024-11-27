@@ -3,15 +3,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Company } from '../companies/entities/company.entity';
-import { Role } from '../roles/entities/role.entity';
+import { Companies } from '../companies/entities/company.entity';
+import { Roles } from '../roles/entities/role.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UnauthorizedException } from '@nestjs/common';
 
 jest.mock('bcrypt'); 
 
@@ -30,14 +29,14 @@ const mockJwtService = {
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let repository: Repository<Users>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(Users),
           useValue: mockUserRepository,
         },
         {
@@ -48,7 +47,7 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    repository = module.get<Repository<Users>>(getRepositoryToken(Users));
   });
 
   afterEach(() => {
@@ -65,12 +64,12 @@ describe('UsersService', () => {
         role_id: 1,
       };
       const hashedPassword = '$2b$15$tWe.F6bqCOA9ulmrd9VUbuD48gN8Z/i83anwyTYI3fkQgGVELnz22';
-      const user: User = {
+      const user: Users = {
         id: 1,
         ...createUserDto,
         password: hashedPassword,
-        company: new Company(),
-        role: new Role(),
+        company: new Companies(),
+        role: new Roles(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -93,12 +92,12 @@ describe('UsersService', () => {
 
   describe('findAll', () => {
     it('should return all users', async () => {
-      const users: User[] = [
+      const users: Users[] = [
         {
           id: 1,
           username: 'Test User',
-          company: new Company(),
-          role: new Role(),
+          company: new Companies(),
+          role: new Roles(),
           created_at: new Date(),
           updated_at: new Date(),
           company_id: 0,
@@ -110,8 +109,8 @@ describe('UsersService', () => {
         {
           id: 2,
           username: 'Test User 2',
-          company: new Company(),
-          role: new Role(),
+          company: new Companies(),
+          role: new Roles(),
           created_at: new Date(),
           updated_at: new Date(),
           company_id: 0,
@@ -131,12 +130,12 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user by ID', async () => {
-      const user: User = {
+      const user: Users = {
         id: 1,
         username: 'Test User',
         company_id: 0,
-        company: new Company(),
-        role: new Role(),
+        company: new Companies(),
+        role: new Roles(),
         email: '',
         password: '',
         role_id: 0,
@@ -214,15 +213,15 @@ describe('UsersService', () => {
   describe('login', () => {
     it('should return a user and token on successful login', async () => {
       const loginUserDto: LoginUserDto = { username: 'test', password: 'password' };
-      const user: User = {
+      const user: Users = {
         id: 1,
         username: 'test',
         email: 'test@example.com',
         password: '$2b$15$tWe.F6bqCOA9ulmrd9VUbuD48gN8Z/i83anwyTYI3fkQgGVELnz22',
         company_id: 1,
         role_id: 1,
-        company: new Company(),
-        role: new Role(),
+        company: new Companies(),
+        role: new Roles(),
         created_at: new Date(),
         updated_at: new Date(),
       };

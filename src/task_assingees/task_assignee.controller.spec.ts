@@ -3,10 +3,10 @@ import { TaskAssigneesController } from './task_assignee.controller';
 import { TaskAssigneesService } from './task_assignees.service';
 import { CreateTaskAssigneeDto } from './dto/create-task_assignee.dto';
 import { UpdateTaskAssigneeDto } from './dto/update-task_assignee.dto';
-import { TaskAssignee } from './entities/task_assignee.entity';
+import { TaskAssignees } from './entities/task_assignee.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Task } from '../tasks/entities/task.entity';
-import { User } from '../users/entities/user.entity';
+import { Tasks } from '../tasks/entities/task.entity';
+import { Users } from '../users/entities/user.entity';
 
 const mockTaskAssigneesService = {
   create: jest.fn(),
@@ -49,13 +49,13 @@ describe('TaskAssigneesController', () => {
         task_id: 1,
         user_id: 1,
       };
-      const createdTaskAssignee: TaskAssignee = {
+      const createdTaskAssignee: TaskAssignees = {
         task_id: 1,
         user_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        task: new Task(),
-        user: new User(),
+        task: new Tasks(),
+        user: new Users(),
       };
 
       jest.spyOn(service, 'create').mockResolvedValue(createdTaskAssignee);
@@ -69,22 +69,22 @@ describe('TaskAssigneesController', () => {
   describe('findAll', () => {
     it('should find all task assignees for a specific task', async () => {
       const taskId = 1;
-      const taskAssignees: TaskAssignee[] = [
+      const taskAssignees: TaskAssignees[] = [
         {
           task_id: 1,
           user_id: 1,
           created_at: new Date(),
           updated_at: new Date(),
-          task: null,
-          user: null,
+          task: new Tasks(),
+          user: new Users(),
         },
         {
           task_id: 1,
           user_id: 2,
           created_at: new Date(),
           updated_at: new Date(),
-          task: null,
-          user: null,
+          task: new Tasks(),
+          user: new Users(),
         },
       ];
 
@@ -109,13 +109,13 @@ describe('TaskAssigneesController', () => {
     it('should find a specific task assignee by task and user id', async () => {
       const taskId = 1;
       const userId = 1;
-      const taskAssignee: TaskAssignee = {
+      const taskAssignee: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
         created_at: new Date(),
         updated_at: new Date(),
-        task: null,
-        user: null,
+        task: new Tasks(),
+        user: new Users(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(taskAssignee);
@@ -155,13 +155,13 @@ describe('TaskAssigneesController', () => {
       const updateDto: UpdateTaskAssigneeDto = {
         // Incluir os campos que deseja atualizar no DTO
       };
-      const updatedTaskAssignee: TaskAssignee = {
+      const updatedTaskAssignee: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
         created_at: new Date(),
         updated_at: new Date(),
-        task: null,
-        user: null,
+        task: new Tasks(),
+        user: new Users(),
         // Incluir os campos atualizados conforme o DTO
       };
 
@@ -217,13 +217,13 @@ describe('TaskAssigneesController', () => {
     it('should remove a task assignee successfully', async () => {
       const taskId = 1;
       const userId = 1;
-      const taskAssigneeToRemove: TaskAssignee = {
+      const taskAssigneeToRemove: TaskAssignees = {
         task_id: taskId,
         user_id: userId,
         created_at: new Date(),
         updated_at: new Date(),
-        task: null,
-        user: null,
+        task: new Tasks(),
+        user: new Users(),
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(taskAssigneeToRemove);

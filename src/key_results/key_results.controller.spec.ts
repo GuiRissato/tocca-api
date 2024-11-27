@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { KeyResultsController } from './key_results.controller';
 import { KeyResultsService } from './key_results.service';
 import { CreateKeyResultDto } from './dto/create-key_result.dto';
-import { KeyResult } from './entities/key_result.entity';
-import { Objective } from '../objectives/entities/objective.entity';
+import { KeyResults } from './entities/key_result.entity';
+import { Objectives } from '../objectives/entities/objective.entity';
 
 const mockKeyResultService = {
   create: jest.fn(),
@@ -47,10 +47,10 @@ describe('KeyResultsController', () => {
         end_date: new Date(),
       };
 
-      const createdKeyResult: KeyResult = {
+      const createdKeyResult: KeyResults = {
         id: 1,
         ...createKeyResultDto,
-        objective: new Objective(),
+        objective: new Objectives(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -78,7 +78,7 @@ describe('KeyResultsController', () => {
           end_date: new Date(),
           created_at: new Date(),
           updated_at: new Date(),
-          objective: new Objective(),
+          objective: new Objectives(),
         },
         {
           id: 2,
@@ -90,7 +90,7 @@ describe('KeyResultsController', () => {
           end_date: new Date(),
           created_at: new Date(),
           updated_at: new Date(),
-          objective: new Objective(),
+          objective: new Objectives(),
         },
       ];
 
@@ -116,7 +116,7 @@ describe('KeyResultsController', () => {
         end_date: new Date(),
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockKeyResult);
@@ -145,7 +145,7 @@ describe('KeyResultsController', () => {
         ...updateKeyResultDto,
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedKeyResult);
@@ -173,7 +173,7 @@ describe('KeyResultsController', () => {
         end_date: new Date(),
         created_at: new Date(),
         updated_at: new Date(),
-        objective: new Objective(),
+        objective: new Objectives(),
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(mockKeyResult);

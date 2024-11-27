@@ -3,29 +3,29 @@ import { TasksService } from './tasks.service';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity';
+import { Tasks } from './entities/task.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { KeyResult } from '../key_results/entities/key_result.entity';
-import { ColumnsKeyResult } from '../columns_key_result/entities/columns_key_result.entity'
+import { KeyResults } from '../key_results/entities/key_result.entity';
+import { ColumnsKeyResults } from '../columns_key_result/entities/columns_key_result.entity'
 import { NotFoundException } from '@nestjs/common';
 
 describe('TasksService', () => {
   let service: TasksService;
-  let repository: Repository<Task>;
+  let repository: Repository<Tasks>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TasksService,
         {
-          provide: getRepositoryToken(Task),
+          provide: getRepositoryToken(Tasks),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<TasksService>(TasksService);
-    repository = module.get<Repository<Task>>(getRepositoryToken(Task));
+    repository = module.get<Repository<Tasks>>(getRepositoryToken(Tasks));
   });
 
   it('should be defined', () => {
@@ -43,13 +43,13 @@ describe('TasksService', () => {
         due_date: new Date(),
         column_key_result_id: 1,
       };
-      const createdTask: Task = {
+      const createdTask: Tasks = {
         id: 1,
         ...createDto,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResultId: new KeyResult(),
-        columnKeyResultId: new ColumnsKeyResult()
+        keyResultId: new KeyResults(),
+        columnKeyResultId: new ColumnsKeyResults()
       };
   
       jest.spyOn(repository, 'create').mockReturnValue(createdTask);
@@ -64,7 +64,7 @@ describe('TasksService', () => {
   describe('findAll', () =>{
     it('should find all tasks by key_result_id', async () => {
       const keyResultId = 1;
-      const mockTasks: Task[] = [
+      const mockTasks: Tasks[] = [
         {
           id: 1,
           key_result_id: keyResultId,
@@ -76,8 +76,8 @@ describe('TasksService', () => {
           column_key_result_id: 1,
           created_at: new Date(),
           updated_at: new Date(),
-          keyResultId: new KeyResult(),
-          columnKeyResultId: new ColumnsKeyResult(),
+          keyResultId: new KeyResults(),
+          columnKeyResultId: new ColumnsKeyResults(),
         },
         {
           id: 2,
@@ -90,8 +90,8 @@ describe('TasksService', () => {
           column_key_result_id: 2,
           created_at: new Date(),
           updated_at: new Date(),
-          keyResultId: new KeyResult(),
-          columnKeyResultId: new ColumnsKeyResult(),
+          keyResultId: new KeyResults(),
+          columnKeyResultId: new ColumnsKeyResults(),
         },
       ];
 
@@ -106,7 +106,7 @@ describe('TasksService', () => {
   describe('findOne', () => {
     it('should find a task by id', async () => {
       const taskId = 1;
-      const mockTask: Task = {
+      const mockTask: Tasks = {
         id: taskId,
         key_result_id: 1,
         task_name: 'Task 1',
@@ -117,8 +117,8 @@ describe('TasksService', () => {
         column_key_result_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResultId: new KeyResult(),
-        columnKeyResultId: new ColumnsKeyResult(),
+        keyResultId: new KeyResults(),
+        columnKeyResultId: new ColumnsKeyResults(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockTask);
@@ -153,7 +153,7 @@ describe('TasksService', () => {
         due_date: new Date(),
         column_key_result_id: 2,
       };
-      const existingTask: Task = {
+      const existingTask: Tasks = {
         id: taskId,
         key_result_id: 1,
         task_name: 'Task 1',
@@ -164,10 +164,10 @@ describe('TasksService', () => {
         column_key_result_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResultId: new KeyResult(),
-        columnKeyResultId: new ColumnsKeyResult(),
+        keyResultId: new KeyResults(),
+        columnKeyResultId: new ColumnsKeyResults(),
       };
-      const updatedTask: Task = {
+      const updatedTask: Tasks = {
         ...existingTask,
         ...updateDto,
       };
@@ -205,7 +205,7 @@ describe('TasksService', () => {
   describe('remove', () => {
     it('should remove a task', async () => {
       const taskId = 1;
-      const mockTask: Task = {
+      const mockTask: Tasks = {
         id: taskId,
         key_result_id: 1,
         task_name: 'Task 1',
@@ -216,8 +216,8 @@ describe('TasksService', () => {
         column_key_result_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResultId: new KeyResult(),
-        columnKeyResultId: new ColumnsKeyResult(),
+        keyResultId: new KeyResults(),
+        columnKeyResultId: new ColumnsKeyResults(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockTask);

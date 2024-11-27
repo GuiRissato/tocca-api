@@ -1,5 +1,5 @@
-import { Company } from '../../companies/entities/company.entity';
-import { Role } from '../../roles/entities/role.entity';
+import { Companies } from '../../companies/entities/company.entity';
+import { Roles } from '../../roles/entities/role.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,16 +14,16 @@ import {
 @Entity()
 @Unique(['username'])
 @Unique(['email'])
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   company_id: number;
 
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Companies)
   @JoinColumn({ name: 'company_id' })
-  company: Company;
+  company: Companies;
 
   @Column()
   username: string;
@@ -37,9 +37,9 @@ export class User {
   @Column()
   role_id: number;
 
-  @ManyToOne(() => Role)
+  @ManyToOne(() => Roles)
   @JoinColumn({name: 'role_id'})
-  role: Role;
+  role: Roles;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

@@ -3,16 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Comment } from './entities/comment.entity';
+import { Comments } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private readonly repository: Repository<Comment>,
+    private readonly repository: Repository<Comments>,
   ) {}
 
-  create(createCommentDto: CreateCommentDto): Promise<Comment> {
+  create(createCommentDto: CreateCommentDto): Promise<Comments> {
     try {
       const comment = this.repository.create(createCommentDto);
       return this.repository.save(comment);
@@ -22,7 +22,7 @@ export class CommentsService {
     }
   }
 
-  findAll(taskId: number): Promise<Comment[]> {
+  findAll(taskId: number): Promise<Comments[]> {
     try {
       const comments = this.repository.find({ where: { task_id: taskId}});
       return comments;
@@ -32,7 +32,7 @@ export class CommentsService {
     }
   }
 
-  async findOne(taskId: number, userId: number): Promise<Comment> {
+  async findOne(taskId: number, userId: number): Promise<Comments> {
     try {
       const comment = await this.repository.findOne({ where: { task_id: taskId, user_id: userId } });
       if (!comment) {
@@ -45,7 +45,7 @@ export class CommentsService {
     }
   }
 
-  async update(taskId: number, userId: number, updateCommentDto: UpdateCommentDto): Promise<Comment> {
+  async update(taskId: number, userId: number, updateCommentDto: UpdateCommentDto): Promise<Comments> {
     try {
       const comment = await this.repository.preload({
         task_id: taskId,
@@ -62,7 +62,7 @@ export class CommentsService {
     }
   }
 
-  async remove(taskId: number, userId: number): Promise<Comment> {
+  async remove(taskId: number, userId: number): Promise<Comments> {
     try {
       const comment = await this.repository.findOne({ where: { task_id: taskId, user_id: userId } });
       if (!comment) {

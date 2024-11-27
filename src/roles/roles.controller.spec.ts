@@ -3,9 +3,9 @@ import { RolesController } from './roles.controller';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { Role } from './entities/role.entity';
+import { Roles } from './entities/role.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Company } from '../companies/entities/company.entity';
+import { Companies } from '../companies/entities/company.entity';
 
 const mockRolesService = {
   create: jest.fn(),
@@ -41,9 +41,9 @@ describe('RolesController', () => {
   describe('create', () => {
     it('should create a new role', async () => {
       const createRoleDto: CreateRoleDto = { role_name: 'Admin', company_id: 1 };
-      const createdRole: Role = {
+      const createdRole: Roles = {
         id: 1, ...createRoleDto, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       };
 
       jest.spyOn(service, 'create').mockResolvedValue(createdRole);
@@ -64,13 +64,13 @@ describe('RolesController', () => {
 
   describe('findAll', () => {
     it('should return an array of roles', async () => {
-      const roles: Role[] = [{
+      const roles: Roles[] = [{
         id: 1, role_name: 'Admin', company_id: 1, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       },
       {
         id: 2, role_name: 'manager', company_id: 1, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       }];
 
       jest.spyOn(service, 'findAll').mockResolvedValue(roles);
@@ -82,9 +82,9 @@ describe('RolesController', () => {
 
   describe('findOne', () => {
     it('should return a role', async () => {
-      const role: Role = {
+      const role: Roles = {
         id: 1, role_name: 'Admin', company_id: 1, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(role);
@@ -103,9 +103,9 @@ describe('RolesController', () => {
   describe('update', () => {
     it('should update a role', async () => {
       const updateRoleDto: UpdateRoleDto = { role_name: 'User' };
-      const updatedRole: Role = {
+      const updatedRole: Roles = {
         id: 1, role_name: 'User', company_id: 1, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedRole);
@@ -117,9 +117,9 @@ describe('RolesController', () => {
 
   describe('remove', () => {
     it('should remove a role', async () => {
-      const role: Role = {
+      const role: Roles = {
         id: 1, role_name: 'Admin', company_id: 1, created_at: new Date(), updated_at: new Date(),
-        company: new Company()
+        company: new Companies()
       };
 
       jest.spyOn(service, 'remove').mockResolvedValue(role);

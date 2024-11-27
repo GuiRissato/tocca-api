@@ -2,16 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateKeyResultDto } from './dto/create-key_result.dto';
 import { UpdateKeyResultDto } from './dto/update-key_result.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KeyResult } from './entities/key_result.entity';
+import { KeyResults } from './entities/key_result.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class KeyResultsService {
   constructor(
-    @InjectRepository(KeyResult)
-    private readonly repository: Repository<KeyResult>,
+    @InjectRepository(KeyResults)
+    private readonly repository: Repository<KeyResults>,
   ) {}
-  create(createKeyResultDto: CreateKeyResultDto): Promise<KeyResult> {
+  create(createKeyResultDto: CreateKeyResultDto): Promise<KeyResults> {
     try {
       const createKeyResult = this.repository.create(createKeyResultDto);
       return this.repository.save(createKeyResult);
@@ -21,7 +21,7 @@ export class KeyResultsService {
     }
   }
 
-  findAll(objectiveId: number): Promise<KeyResult[]> {
+  findAll(objectiveId: number): Promise<KeyResults[]> {
     try {
       const allKeyResults = this.repository.find({
         where: { objective_id: objectiveId },
@@ -34,7 +34,7 @@ export class KeyResultsService {
     }
   }
 
-  findOne(id: number): Promise<KeyResult> {
+  findOne(id: number): Promise<KeyResults> {
     try {
       const foundKeyResult = this.repository.findOne({ where: { id } });
       return foundKeyResult;
@@ -47,7 +47,7 @@ export class KeyResultsService {
   async update(
     id: number,
     updateKeyResultDto: UpdateKeyResultDto,
-  ): Promise<KeyResult> {
+  ): Promise<KeyResults> {
     try {
       const keyResult = await this.repository.preload({
         id: id,

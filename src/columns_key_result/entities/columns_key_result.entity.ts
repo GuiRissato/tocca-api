@@ -1,4 +1,4 @@
-import { KeyResult } from '../../key_results/entities/key_result.entity';
+import { KeyResults } from '../../key_results/entities/key_result.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,16 +10,16 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class ColumnsKeyResult {
+export class ColumnsKeyResults {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   key_result_id: number;
 
-  @ManyToOne(() => KeyResult)
+  @ManyToOne(() => KeyResults)
   @JoinColumn({ name: 'key_result_id' })
-  keyResult: KeyResult;
+  keyResult: KeyResults;
 
   @Column()
   column_name: string;

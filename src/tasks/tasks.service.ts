@@ -3,16 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity';
+import { Tasks } from './entities/task.entity';
 
 @Injectable()
 export class TasksService {
   constructor(
-    @InjectRepository(Task)
-    private readonly repository: Repository<Task>,
+    @InjectRepository(Tasks)
+    private readonly repository: Repository<Tasks>,
   ) {}
 
-  create(createTaskDto: CreateTaskDto): Promise<Task> {
+  create(createTaskDto: CreateTaskDto): Promise<Tasks> {
     try {
       const task = this.repository.create(createTaskDto);
       return this.repository.save(task);
@@ -22,7 +22,7 @@ export class TasksService {
     }
   }
 
-  findAll(key_result_id: number): Promise<Task[]> {
+  findAll(key_result_id: number): Promise<Tasks[]> {
   try {
     const tasks = this.repository.find({ where: { key_result_id } });
     return tasks;
@@ -31,7 +31,7 @@ export class TasksService {
     throw new Error('Error retrieving tasks for key_result_id');
   }
 }
-  findOne(id: number): Promise<Task> {
+  findOne(id: number): Promise<Tasks> {
     try {
       const task = this.repository.findOne({ where: { id } });
       if (!task) {
@@ -44,7 +44,7 @@ export class TasksService {
     }
   }
 
-  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
+  async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Tasks> {
     try {
       const task = await this.repository.preload({
         id: id,

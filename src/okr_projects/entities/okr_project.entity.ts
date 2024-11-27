@@ -1,4 +1,4 @@
-import { Company } from '../../companies/entities/company.entity';
+import { Companies } from '../../companies/entities/company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,16 +10,16 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class OkrProject {
+export class OkrProjects {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   company_id: number;
 
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Companies)
   @JoinColumn({ name: 'company_id' })
-  company: Company;
+  company: Companies;
 
   @Column({ length: 100, nullable: false })
   project_name: string;

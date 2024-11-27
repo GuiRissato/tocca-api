@@ -3,8 +3,8 @@ import { TagsController } from './tags.controller';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { Tag } from './entities/tag.entity';
-import { Company } from '../companies/entities/company.entity';
+import { Tags } from './entities/tag.entity';
+import { Companies } from '../companies/entities/company.entity';
 import { NotFoundException } from '@nestjs/common';
 
 const mockTagsService = {
@@ -42,9 +42,9 @@ describe('TagsController', () => {
   describe('create', () => {
     it('should create a new tag', async () => {
       const createTagDto: CreateTagDto = { tag_name: 'Test Tag', company_id: 1 };
-      const createTag: Tag = {
+      const createTag: Tags = {
         id: 1, ...createTagDto,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date()
       };
@@ -68,11 +68,11 @@ describe('TagsController', () => {
   describe('findOne', () => {
     it('should return a single tag', async () => {
       const tagId = 1;
-      const tag: Tag = {
+      const tag: Tags = {
         id: tagId,
         tag_name: 'Test Tag',
         company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -95,12 +95,12 @@ describe('TagsController', () => {
   describe('findAll', () => {
     it('should return an array of tags', async () => {
       const companyId = 1;
-      const tags: Tag[] = [
+      const tags: Tags[] = [
         {
           id: 1,
           tag_name: 'Tag 1',
           company_id: companyId,
-          company: new Company(),
+          company: new Companies(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -108,7 +108,7 @@ describe('TagsController', () => {
           id: 2,
           tag_name: 'Tag 2',
           company_id: companyId,
-          company: new Company(),
+          company: new Companies(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -134,11 +134,11 @@ describe('TagsController', () => {
     it('should update a tag', async () => {
       const tagId = 1;
       const updateTagDto: UpdateTagDto = { tag_name: 'Updated Tag' };
-      const updatedTag: Tag = {
+      const updatedTag: Tags = {
         id: tagId,
         tag_name: 'Updated Tag',
         company_id: 1,
-        company: new Company(),
+        company: new Companies(),
         created_at: new Date(),
         updated_at: new Date(),
       };

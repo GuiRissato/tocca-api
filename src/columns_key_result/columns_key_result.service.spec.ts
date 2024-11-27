@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ColumnsKeyResultService } from './columns_key_result.service';
 import { Repository } from 'typeorm';
-import { ColumnsKeyResult } from './entities/columns_key_result.entity';
+import { ColumnsKeyResults } from './entities/columns_key_result.entity';
 import { CreateColumnsKeyResultDto } from './dto/create-columns_key_result.dto';
 import { UpdateColumnsKeyResultDto } from './dto/update-columns_key_result.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
-import { KeyResult } from '../key_results/entities/key_result.entity';
+import { KeyResults } from '../key_results/entities/key_result.entity';
 
 const mockColumnsKeyResultRepository = {
   create: jest.fn(),
@@ -19,22 +19,22 @@ const mockColumnsKeyResultRepository = {
 
 describe('ColumnsKeyResultService', () => {
   let service: ColumnsKeyResultService;
-  let repository: Repository<ColumnsKeyResult>;
+  let repository: Repository<ColumnsKeyResults>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ColumnsKeyResultService,
         {
-          provide: getRepositoryToken(ColumnsKeyResult),
+          provide: getRepositoryToken(ColumnsKeyResults),
           useValue: mockColumnsKeyResultRepository,
         },
       ],
     }).compile();
 
     service = module.get<ColumnsKeyResultService>(ColumnsKeyResultService);
-    repository = module.get<Repository<ColumnsKeyResult>>(
-      getRepositoryToken(ColumnsKeyResult),
+    repository = module.get<Repository<ColumnsKeyResults>>(
+      getRepositoryToken(ColumnsKeyResults),
     );
   });
 
@@ -184,12 +184,12 @@ describe('ColumnsKeyResultService', () => {
   describe('remove', () => {
     it('should remove a column key result', async () => {
       const columnId = 1;
-      const mockColumn: ColumnsKeyResult = {
+      const mockColumn: ColumnsKeyResults = {
         id: columnId,
         key_result_id: 1,
         column_name: 'Test Column',
         position: 1,
-        keyResult: new KeyResult(),
+        keyResult: new KeyResults(),
         created_at: new Date(),
         updated_at: new Date(),
       };

@@ -3,28 +3,28 @@ import { OkrProjectsService } from './okr_projects.service';
 import { Repository } from 'typeorm';
 import { CreateOkrProjectDto } from './dto/create-okr_project.dto';
 import { UpdateOkrProjectDto } from './dto/update-okr_project.dto';
-import { OkrProject } from './entities/okr_project.entity';
+import { OkrProjects } from './entities/okr_project.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Company } from '../companies/entities/company.entity';
+import { Companies } from '../companies/entities/company.entity';
 
 describe('OkrProjectsService', () => {
   let service: OkrProjectsService;
-  let repository: Repository<OkrProject>;
+  let repository: Repository<OkrProjects>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OkrProjectsService,
         {
-          provide: getRepositoryToken(OkrProject),
+          provide: getRepositoryToken(OkrProjects),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<OkrProjectsService>(OkrProjectsService);
-    repository = module.get<Repository<OkrProject>>(
-      getRepositoryToken(OkrProject),
+    repository = module.get<Repository<OkrProjects>>(
+      getRepositoryToken(OkrProjects),
     );
   });
 
@@ -38,14 +38,14 @@ describe('OkrProjectsService', () => {
       project_name: '',
       description: '',
     };
-    const createdOkrProject: OkrProject = {
+    const createdOkrProject: OkrProjects = {
       id: 1,
       company_id: 0,
       project_name: 'projeto 1',
       description: 'sem descrição',
       created_at: new Date(),
       updated_at: new Date(),
-      company: new Company(),
+      company: new Companies(),
     };
 
     jest.spyOn(repository, 'create').mockReturnValue(createdOkrProject);
@@ -58,7 +58,7 @@ describe('OkrProjectsService', () => {
 
   it('should find all OKR projects by company ID', async () => {
     const companyId = 1;
-    const mockOkrProjects = [
+    const mockOkrProjects: OkrProjects[] = [
       {
         id: 1,
         company_id: companyId,
@@ -66,7 +66,7 @@ describe('OkrProjectsService', () => {
         description: 'project 1',
         created_at: new Date(),
         updated_at: new Date(),
-        company: new Company(),
+        company: new Companies(),
       },
       {
         id: 2,
@@ -75,7 +75,7 @@ describe('OkrProjectsService', () => {
         description: 'project 2',
         created_at: new Date(),
         updated_at: new Date(),
-        company: new Company(),
+        company: new Companies(),
       },
     ];
 
@@ -89,14 +89,14 @@ describe('OkrProjectsService', () => {
   it('should find one OKR project by ID', async () => {
     const id = 1;
     const companyId = 1;
-    const mockOkrProject = {
+    const mockOkrProject: OkrProjects = {
       id: 1,
       company_id: companyId,
       project_name: 'Project 1',
       description: 'project 1',
       created_at: new Date(),
       updated_at: new Date(),
-      company: new Company(),
+      company: new Companies(),
     };
 
     jest.spyOn(repository, 'findOne').mockResolvedValue(mockOkrProject);
@@ -111,14 +111,14 @@ describe('OkrProjectsService', () => {
     const updateDto: UpdateOkrProjectDto = {
       description: 'teste 1',
     };
-    const updatedOkrProject: OkrProject = {
+    const updatedOkrProject: OkrProjects = {
       id: 1,
       company_id: 1,
       project_name: 'Updated Project 1',
       description: '',
       created_at: new Date(),
       updated_at: new Date(),
-      company: new Company(),
+      company: new Companies(),
     };
 
     jest.spyOn(repository, 'preload').mockResolvedValue(updatedOkrProject);
@@ -132,14 +132,14 @@ describe('OkrProjectsService', () => {
   it('should remove an OKR project', async () => {
     const id = 1; // Example OKR project ID
     const companyId = 1;
-    const mockOkrProject: OkrProject = {
+    const mockOkrProject: OkrProjects = {
       id: 1,
       company_id: companyId,
       project_name: 'Project 1',
       description: 'project 1',
       created_at: new Date(),
       updated_at: new Date(),
-      company: new Company(),
+      company: new Companies(),
     };
 
     jest.spyOn(service, 'findOne').mockResolvedValue(mockOkrProject);

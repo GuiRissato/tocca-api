@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -11,11 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<User>,
+    @InjectRepository(Users) private readonly repository: Repository<Users>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<Users> {
     try {
       const hashedPassword = await bcrypt.hash(createUserDto.password, 15);
       const user = this.repository.create({
@@ -29,7 +29,7 @@ export class UsersService {
     }
   }
 
-  findAll(): Promise<User[]> {
+  findAll(): Promise<Users[]> {
     try {
       const allUsers = this.repository.find();
       return allUsers;
@@ -39,7 +39,7 @@ export class UsersService {
     }
   }
 
-  findOne(id: number): Promise<User> {
+  findOne(id: number): Promise<Users> {
     try {
       const findOneUser = this.repository.findOne({ where: { id } });
       return findOneUser;
@@ -49,7 +49,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
     try {
       const user = await this.repository.preload({
         id: id,
@@ -79,7 +79,7 @@ export class UsersService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{ user: User, token: string }> {
+  async login(loginUserDto: LoginUserDto): Promise<{ user: Users, token: string }> {
     try {
       const { username, password } = loginUserDto;
       const user = await this.repository.findOne({ where: { username } });

@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { Role } from './entities/role.entity';
+import { Roles } from './entities/role.entity';
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectRepository(Role) private repository: Repository<Role>,
+    @InjectRepository(Roles) private repository: Repository<Roles>,
   ) {}
 
-  async create(createRoleDto: CreateRoleDto): Promise<Role> {
+  async create(createRoleDto: CreateRoleDto): Promise<Roles> {
     try {
       const newRole = this.repository.create(createRoleDto);
       return await this.repository.save(newRole);
@@ -21,7 +21,7 @@ export class RolesService {
     }
   }
 
-  async findAll(companyId: number): Promise<Role[]> {
+  async findAll(companyId: number): Promise<Roles[]> {
     try {
       const roles = await this.repository.find({
         where: { company_id: companyId },
@@ -40,7 +40,7 @@ export class RolesService {
     }
   }
 
-  async findOne(id: number): Promise<Role> {
+  async findOne(id: number): Promise<Roles> {
     try {
       const role = await this.repository.findOne({ where: { id: id } });
 
@@ -55,7 +55,7 @@ export class RolesService {
     }
   }
 
-  async update( id: number, updateRoleDto: UpdateRoleDto ): Promise<Role> {
+  async update( id: number, updateRoleDto: UpdateRoleDto ): Promise<Roles> {
     try {
       const role = await this.repository.preload({
         id: id,
@@ -72,7 +72,7 @@ export class RolesService {
   }
 
 
-  async remove(id: number): Promise<Role> {
+  async remove(id: number): Promise<Roles> {
     try {
       const role = await this.findOne(id);
       if (!role) {

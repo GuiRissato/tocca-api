@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectivesService } from './objectives.service';
 import { Repository } from 'typeorm';
-import { Objective } from './entities/objective.entity';
+import { Objectives } from './entities/objective.entity';
 import { CreateObjectiveDto } from './dto/create-objective.dto';
 import { UpdateObjectiveDto } from './dto/update-objective.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { OkrProject } from '../okr_projects/entities/okr_project.entity';
+import { OkrProjects } from '../okr_projects/entities/okr_project.entity';
 
 const mockObjectivesRepository = {
   create: jest.fn(),
@@ -18,22 +18,22 @@ const mockObjectivesRepository = {
 
 describe('ObjectivesService', () => {
   let service: ObjectivesService;
-  let repository: Repository<Objective>;
+  let repository: Repository<Objectives>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ObjectivesService,
         {
-          provide: getRepositoryToken(Objective),
+          provide: getRepositoryToken(Objectives),
           useValue: mockObjectivesRepository,
         },
       ],
     }).compile();
 
     service = module.get<ObjectivesService>(ObjectivesService);
-    repository = module.get<Repository<Objective>>(
-      getRepositoryToken(Objective),
+    repository = module.get<Repository<Objectives>>(
+      getRepositoryToken(Objectives),
     );
   });
 
@@ -51,7 +51,7 @@ describe('ObjectivesService', () => {
         start_date: new Date(),
         end_date: new Date(),
       };
-      const createdObjective: Objective = {
+      const createdObjective: Objectives = {
         id: 1,
         project_id: 1,
         objective_name: 'Objective 1',
@@ -61,7 +61,7 @@ describe('ObjectivesService', () => {
         status: '',
         start_date: new Date(),
         end_date: new Date(),
-        project: new OkrProject(),
+        project: new OkrProjects(),
       };
 
       jest.spyOn(repository, 'create').mockReturnValue(createdObjective);
@@ -76,7 +76,7 @@ describe('ObjectivesService', () => {
   describe('findAll', () => {
     it('should find all objectives by project ID', async () => {
       const projectId = 1;
-      const mockObjectives = [
+      const mockObjectives: Objectives[] = [
         {
           id: 1,
           project_id: projectId,
@@ -87,8 +87,20 @@ describe('ObjectivesService', () => {
           status: 'progress',
           start_date: new Date(),
           end_date: new Date(),
-          project: new OkrProject(),
+          project: new OkrProjects(),
         },
+        {
+          id: 2,
+           project_id: projectId,
+           objective_name: 'Objective 2',
+           description: 'Description 2',
+           created_at: new Date(),
+           updated_at: new Date(),
+           status: 'completed',
+           start_date: new Date(),
+           end_date: new Date(),
+           project: new OkrProjects(),
+        }
       ];
 
       jest.spyOn(repository, 'find').mockResolvedValue(mockObjectives);
@@ -102,7 +114,7 @@ describe('ObjectivesService', () => {
   describe('findOne', () => {
     it('should find one objective by ID', async () => {
       const id = 1;
-      const mockObjective = {
+      const mockObjective: Objectives = {
         id: 1,
         project_id: 1,
         objective_name: 'Objective 1',
@@ -112,7 +124,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
-        project: new OkrProject(),
+        project: new OkrProjects(),
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockObjective);
@@ -129,7 +141,7 @@ describe('ObjectivesService', () => {
       const updateObjectiveDto: UpdateObjectiveDto = {
         description: 'Updated Description 1',
       };
-      const updatedObjective: Objective = {
+      const updatedObjective: Objectives = {
         id: 1,
         project_id: 1,
         objective_name: 'Objective 1',
@@ -139,7 +151,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
-        project: new OkrProject(),
+        project: new OkrProjects(),
       };
 
       jest.spyOn(repository, 'preload').mockResolvedValue(updatedObjective);
@@ -154,7 +166,7 @@ describe('ObjectivesService', () => {
   describe('remove', () => {
     it('should remove an objective', async () => {
       const id = 1;
-      const mockObjective = {
+      const mockObjective: Objectives = {
         id: 1,
         project_id: 1,
         objective_name: 'Objective 1',
@@ -164,7 +176,7 @@ describe('ObjectivesService', () => {
         status: 'progress',
         start_date: new Date(),
         end_date: new Date(),
-        project: new OkrProject(),
+        project: new OkrProjects(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockObjective);

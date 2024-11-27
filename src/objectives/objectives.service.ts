@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateObjectiveDto } from './dto/create-objective.dto';
 import { UpdateObjectiveDto } from './dto/update-objective.dto';
-import { Objective } from './entities/objective.entity';
+import { Objectives } from './entities/objective.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ObjectivesService {
   constructor(
-    @InjectRepository(Objective)
-    private readonly repository: Repository<Objective>,
+    @InjectRepository(Objectives)
+    private readonly repository: Repository<Objectives>,
   ) {}
 
-  create(createObjectiveDto: CreateObjectiveDto): Promise<Objective> {
+  create(createObjectiveDto: CreateObjectiveDto): Promise<Objectives> {
     try {
       const objective = this.repository.create(createObjectiveDto);
       return this.repository.save(objective);
@@ -22,7 +22,7 @@ export class ObjectivesService {
     }
   }
 
-  findAll(projectId: number): Promise<Objective[]> {
+  findAll(projectId: number): Promise<Objectives[]> {
     try {
       const allObjectives = this.repository.find({
         where: { project_id: projectId },
@@ -34,7 +34,7 @@ export class ObjectivesService {
     }
   }
 
-  findOne(id: number): Promise<Objective> {
+  findOne(id: number): Promise<Objectives> {
     try {
       const foundObjective = this.repository.findOne({ where: { id } });
       return foundObjective;
@@ -47,7 +47,7 @@ export class ObjectivesService {
   async update(
     id: number,
     updateObjectiveDto: UpdateObjectiveDto,
-  ): Promise<Objective> {
+  ): Promise<Objectives> {
     try {
       const objective = await this.repository.preload({
         id: id,

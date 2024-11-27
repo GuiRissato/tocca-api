@@ -1,22 +1,22 @@
 import { Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
-import { Task } from '../../tasks/entities/task.entity';
-import { User } from '../../users/entities/user.entity';
+import { Tasks } from '../../tasks/entities/task.entity';
+import { Users } from '../../users/entities/user.entity';
 @Entity()
-export class Comment {
+export class Comments {
 
     @PrimaryColumn()
     task_id: number;
 
-    @ManyToOne(() => Task)
+    @ManyToOne(() => Tasks)
     @JoinColumn({ name: 'task_id' })
-    task: Task;
+    task: Tasks;
 
     @PrimaryColumn()
     user_id: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => Users)
     @JoinColumn({ name: 'user_id' })
-    user: User;
+    user: Users;
 
     @Column('text')
     commet_text: string;

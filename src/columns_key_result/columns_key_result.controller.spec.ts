@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ColumnsKeyResultController } from './columns_key_result.controller';
 import { ColumnsKeyResultService } from './columns_key_result.service';
-import { ColumnsKeyResult } from './entities/columns_key_result.entity';
+import { ColumnsKeyResults } from './entities/columns_key_result.entity';
 import { CreateColumnsKeyResultDto } from './dto/create-columns_key_result.dto';
-import { KeyResult } from '../key_results/entities/key_result.entity';
+import { KeyResults } from '../key_results/entities/key_result.entity';
 import { NotFoundException } from '@nestjs/common';
 
 const mockColumnsKeyResultService = {
@@ -51,12 +51,12 @@ describe('ColumnsKeyResultController', () => {
         position: 1,
       };
 
-      const createdColumnsKeyResult: ColumnsKeyResult = {
+      const createdColumnsKeyResult: ColumnsKeyResults = {
         id: 1,
         ...createColumnsKeyResultDto,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResult: new KeyResult(),
+        keyResult: new KeyResults(),
       };
 
       jest.spyOn(service, 'create').mockResolvedValue(createdColumnsKeyResult);
@@ -71,7 +71,7 @@ describe('ColumnsKeyResultController', () => {
   describe('findAll', () => {
     it('should call columns key result service to find all columns by key result ID', async () => {
       const keyResultId = 1;
-      const mockColumnsKeyResults: ColumnsKeyResult[] = [
+      const mockColumnsKeyResults: ColumnsKeyResults[] = [
         {
           id: 1,
           key_result_id: keyResultId,
@@ -79,7 +79,7 @@ describe('ColumnsKeyResultController', () => {
           position: 1,
           created_at: new Date(),
           updated_at: new Date(),
-          keyResult: new KeyResult(),
+          keyResult: new KeyResults(),
         },
         {
           id: 2,
@@ -88,7 +88,7 @@ describe('ColumnsKeyResultController', () => {
           position: 2,
           created_at: new Date(),
           updated_at: new Date(),
-          keyResult: new KeyResult(),
+          keyResult: new KeyResults(),
         },
       ];
 
@@ -116,14 +116,14 @@ describe('ColumnsKeyResultController', () => {
   describe('findOne', () => {
     it('should call columns key result service to find one column by ID', async () => {
       const columnId = 1;
-      const mockColumn: ColumnsKeyResult = {
+      const mockColumn: ColumnsKeyResults = {
         id: columnId,
         key_result_id: 1,
         column_name: 'Example Column',
         position: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResult: new KeyResult(),
+        keyResult: new KeyResults(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockColumn);
@@ -155,13 +155,13 @@ describe('ColumnsKeyResultController', () => {
         position: 2,
       };
 
-      const updatedColumnsKeyResult: ColumnsKeyResult = {
+      const updatedColumnsKeyResult: ColumnsKeyResults = {
         id: columnId,
         key_result_id: 1,
         ...updateColumnsKeyResultDto,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResult: new KeyResult(),
+        keyResult: new KeyResults(),
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedColumnsKeyResult);
@@ -222,14 +222,14 @@ describe('ColumnsKeyResultController', () => {
   describe('remove', () => {
     it('should call columns key result service to remove a column by ID', async () => {
       const columnId = 1;
-      const mockColumn: ColumnsKeyResult = {
+      const mockColumn: ColumnsKeyResults = {
         id: columnId,
         key_result_id: 1,
         column_name: 'Example Column',
         position: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        keyResult: new KeyResult(),
+        keyResult: new KeyResults(),
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(mockColumn);

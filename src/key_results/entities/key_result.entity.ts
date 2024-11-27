@@ -7,19 +7,19 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Objective } from '../../objectives/entities/objective.entity';
+import { Objectives } from '../../objectives/entities/objective.entity';
 
 @Entity()
-export class KeyResult {
+export class KeyResults {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   objective_id: number;
 
-  @ManyToOne(() => Objective)
+  @ManyToOne(() => Objectives)
   @JoinColumn({ name: 'objective_id' })
-  objective: Objective;
+  objective: Objectives;
 
   @Column()
   key_result_name: string;

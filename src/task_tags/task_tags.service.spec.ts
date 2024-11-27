@@ -1,30 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskTagsService } from './task_tags.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TaskTag } from './entities/task_tag.entity';
+import { TaskTags } from './entities/task_tag.entity';
 import { Repository } from 'typeorm';
 import { CreateTaskTagDto } from './dto/create-task_tag.dto';
-import { Tag } from '../tags/entities/tag.entity';
-import { Task } from '../tasks/entities/task.entity';
+import { Tags } from '../tags/entities/tag.entity';
+import { Tasks } from '../tasks/entities/task.entity';
 import { UpdateTaskTagDto } from './dto/update-task_tag.dto';
 
 describe('TaskTagsService', () => {
   let service: TaskTagsService;
-  let repository: Repository<TaskTag>;
+  let repository: Repository<TaskTags>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TaskTagsService,
         {
-          provide: getRepositoryToken(TaskTag),
+          provide: getRepositoryToken(TaskTags),
           useClass: Repository,
         },
       ],
     }).compile();
 
     service = module.get<TaskTagsService>(TaskTagsService);
-    repository = module.get<Repository<TaskTag>>(getRepositoryToken(TaskTag));
+    repository = module.get<Repository<TaskTags>>(getRepositoryToken(TaskTags));
   });
 
   it('should be defined', () => {
@@ -34,10 +34,10 @@ describe('TaskTagsService', () => {
   describe('create', () => {
     it('should create a task tag', async () => {
       const createTaskTagDto: CreateTaskTagDto = { task_id: 1, tag_id: 1 };
-      const mockTaskTag: TaskTag = {
+      const mockTaskTag: TaskTags = {
         ...createTaskTagDto,
-        task: new Task(),
-        tag: new Tag(),
+        task: new Tasks(),
+        tag: new Tags(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -54,7 +54,7 @@ describe('TaskTagsService', () => {
     it('should throw an error if task_id is not provided', async () => {
       const createTaskTagDto: CreateTaskTagDto = { tag_id: 1, task_id: null };
 
-      jest.spyOn(repository, 'create').mockReturnValue({} as TaskTag);
+      jest.spyOn(repository, 'create').mockReturnValue({} as TaskTags);
       jest
         .spyOn(repository, 'save')
         .mockRejectedValue(new Error('task_id is required'));
@@ -68,20 +68,20 @@ describe('TaskTagsService', () => {
   describe('findAll', () => {
     it('should find all task tags by task_id', async () => {
       const taskId = 1;
-      const mockTaskTags: TaskTag[] = [
+      const mockTaskTags: TaskTags[] = [
         {
           task_id: 1,
           tag_id: 1,
-          task: new Task(),
-          tag: new Tag(),
+          task: new Tasks(),
+          tag: new Tags(),
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
           task_id: 1,
           tag_id: 2,
-          task: new Task(),
-          tag: new Tag(),
+          task: new Tasks(),
+          tag: new Tags(),
           created_at: new Date(),
           updated_at: new Date(),
         },
@@ -115,11 +115,11 @@ describe('TaskTagsService', () => {
     it('should find and return a task tag for a specific task', async () => {
       const taskId = 1;
       const tagId = 1;
-      const mockTaskTag: TaskTag = {
+      const mockTaskTag: TaskTags = {
         task_id: taskId,
         tag_id: tagId,
-        task: new Task(),
-        tag: new Tag(),
+        task: new Tasks(),
+        tag: new Tags(),
         created_at: new Date(),
         updated_at: new Date(),
       };
@@ -151,11 +151,11 @@ describe('TaskTagsService', () => {
       const taskId = 1;
       const tagId = 1;
       const updateTaskTagDto: UpdateTaskTagDto = { task_id: 1, tag_id: 1 };
-      const mockTaskTag: TaskTag = {
+      const mockTaskTag: TaskTags = {
         task_id: taskId,
         tag_id: tagId,
-        task: new Task(),
-        tag: new Tag(),
+        task: new Tasks(),
+        tag: new Tags(),
         created_at: new Date(),
         updated_at: new Date(),
         ...updateTaskTagDto,
@@ -191,11 +191,11 @@ describe('TaskTagsService', () => {
     it('should remove a task tag', async () => {
       const taskId = 1;
       const tagId = 1;
-      const mockTaskTag: TaskTag = {
+      const mockTaskTag: TaskTags = {
         task_id: taskId,
         tag_id: tagId,
-        task: new Task(),
-        tag: new Tag(),
+        task: new Tasks(),
+        tag: new Tags(),
         created_at: new Date(),
         updated_at: new Date(),
       };
