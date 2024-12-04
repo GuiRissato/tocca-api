@@ -95,7 +95,7 @@ export class UsersService {
   
       const payload = { username: user.username, sub: user.id };
       const token = this.jwtService.sign(payload);
-      console.log({user,token})
+      
       return { user, token };
     } catch (error) {
       console.error('Error login ', error.message)
