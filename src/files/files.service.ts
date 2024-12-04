@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Objectives } from '../objectives/entities/objective.entity';
 import { OkrProjects } from '../okr_projects/entities/okr_project.entity';
 import { KeyResults } from '../key_results/entities/key_result.entity';
 import { Tasks } from '../tasks/entities/task.entity';
 import { DelayedTaskSummary, ImportantDatesPdfData, OkrProgress, TaskPerformance } from './interfaces/interfaces.files';
 import { ColumnsKeyResults } from '../columns_key_result/entities/columns_key_result.entity';
+import { getYear } from 'date-fns';
 
 @Injectable()
 export class FilesService {
   constructor(
-    @InjectRepository(Objectives) private objectivesRepository: Repository<Objectives>,
-    @InjectRepository(OkrProjects) private okrProjectsRepository: Repository<OkrProjects>,
-    @InjectRepository(KeyResults) private keyResultsRepository: Repository<KeyResults>,
-    @InjectRepository(Tasks) private tasksRepository: Repository<Tasks>,
-    @InjectRepository(ColumnsKeyResults) private columnsKeyResultsRepository: Repository<ColumnsKeyResults>,
+    @InjectRepository(Objectives) private readonly objectivesRepository: Repository<Objectives>,
+    @InjectRepository(OkrProjects) private readonly okrProjectsRepository: Repository<OkrProjects>,
+    @InjectRepository(KeyResults) private readonly keyResultsRepository: Repository<KeyResults>,
+    @InjectRepository(Tasks) private readonly tasksRepository: Repository<Tasks>,
+    @InjectRepository(ColumnsKeyResults) private readonly columnsKeyResultsRepository: Repository<ColumnsKeyResults>,
   ) {}
 
   async generateOkrProgress(companyId: number, projectId: number, year: number): Promise<OkrProgress> {
     try {
       const okrProject = await this.okrProjectsRepository.findOne({
-        where: { company_id: companyId, id: projectId },
+        where: { company_id: companyId },
       });
   
       if (!okrProject) {
@@ -29,32 +30,29 @@ export class FilesService {
       }
   
       const objectives = await this.objectivesRepository
-        .createQueryBuilder('objective')
-        .where('objective.project_id = :projectId', { projectId })
-        .andWhere('EXTRACT(YEAR FROM objective.created_at) = :year', { year })
-        .getMany();
+        .findBy({  project_id: projectId })
+      
+
+      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
   
-      const keyResults = await this.keyResultsRepository
-        .createQueryBuilder('key_result')
-        .where('key_result.objective_id IN (:...objectiveIds)', { 
-          objectiveIds: objectives.map(obj => obj.id),
-        })
-        .getMany();
+      const keyResults = await this.keyResultsRepository.find({
+        where: {
+          objective_id: In(filteredObjectives.map(obj => obj.id)),
+        },
+      });
   
-      const tasks = await this.tasksRepository
-        .createQueryBuilder('task')
-        .where('task.key_result_id IN (:...keyResultIds)', { 
-          keyResultIds: keyResults.map(kr => kr.id),
-        })
-        .getMany();
+      const tasks = await this.tasksRepository.find({
+        where: {
+          key_result_id: In(keyResults.map(kr => kr.id)),
+        },
+      });
   
       // Obtenha as colunas relacionadas aos keyResults
-      const columnsKeyResults = await this.columnsKeyResultsRepository
-        .createQueryBuilder('column')
-        .where('column.key_result_id IN (:...keyResultIds)', {
-          keyResultIds: keyResults.map(kr => kr.id),
-        })
-        .getMany();
+      const columnsKeyResults = await this.columnsKeyResultsRepository.find({
+        where: {
+          key_result_id: In(keyResults.map(kr => kr.id)),
+        },
+      });
   
       // Crie um mapeamento de IDs para nomes de colunas
       const columnIdToNameMap = columnsKeyResults.reduce((acc, column) => {
