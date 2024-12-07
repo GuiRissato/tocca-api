@@ -1,59 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
-import { Objectives } from '../objectives/entities/objective.entity';
-import { OkrProjects } from '../okr_projects/entities/okr_project.entity';
+import { In } from 'typeorm';
+import { DelayedTaskSummary, ImportantDatesPdfData, OkrProgress, TaskPerformance } from './interfaces/interfaces.files';
+import { getYear } from 'date-fns';
+import { ObjectivesService } from '../objectives/objectives.service';
+import { OkrProjectsService } from '../okr_projects/okr_projects.service';
+import { TasksService } from '../tasks/tasks.service';
+import { KeyResultsService } from '../key_results/key_results.service';
+import { ColumnsKeyResultService } from '../columns_key_result/columns_key_result.service';
 import { KeyResults } from '../key_results/entities/key_result.entity';
 import { Tasks } from '../tasks/entities/task.entity';
-import { DelayedTaskSummary, ImportantDatesPdfData, OkrProgress, TaskPerformance } from './interfaces/interfaces.files';
-import { ColumnsKeyResults } from '../columns_key_result/entities/columns_key_result.entity';
-import { getYear } from 'date-fns';
+import { ColumnsKeyResults } from 'src/columns_key_result/entities/columns_key_result.entity';
 
 @Injectable()
 export class FilesService {
   constructor(
-    @InjectRepository(Objectives) private readonly objectivesRepository: Repository<Objectives>,
-    @InjectRepository(OkrProjects) private readonly okrProjectsRepository: Repository<OkrProjects>,
-    @InjectRepository(KeyResults) private readonly keyResultsRepository: Repository<KeyResults>,
-    @InjectRepository(Tasks) private readonly tasksRepository: Repository<Tasks>,
-    @InjectRepository(ColumnsKeyResults) private readonly columnsKeyResultsRepository: Repository<ColumnsKeyResults>,
+    private readonly OkrProjectsService: OkrProjectsService,
+    private readonly ObjectivesService: ObjectivesService,
+    private readonly keyResultsService: KeyResultsService,
+    private readonly tasksService: TasksService,
+    private readonly columnsKeyResultsService: ColumnsKeyResultService,
   ) {}
 
-  async generateOkrProgress(companyId: number, projectId: number, year: number): Promise<OkrProgress> {
+  async generateOkrProgress( projectId: number, year: number): Promise<OkrProgress> {
     try {
-      const okrProject = await this.okrProjectsRepository.findOne({
-        where: { company_id: companyId },
-      });
+      const okrProject = await this.OkrProjectsService.findOne(projectId);
   
       if (!okrProject) {
         throw new Error('Projeto não encontrado!');
       }
   
-      const objectives = await this.objectivesRepository
-        .findBy({  project_id: projectId })
+      const objectives = await this.ObjectivesService.findAll(projectId);
       
 
       const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
-  
-      const keyResults = await this.keyResultsRepository.find({
-        where: {
-          objective_id: In(filteredObjectives.map(obj => obj.id)),
-        },
-      });
-  
-      const tasks = await this.tasksRepository.find({
-        where: {
-          key_result_id: In(keyResults.map(kr => kr.id)),
-        },
-      });
-  
-      // Obtenha as colunas relacionadas aos keyResults
-      const columnsKeyResults = await this.columnsKeyResultsRepository.find({
-        where: {
-          key_result_id: In(keyResults.map(kr => kr.id)),
-        },
-      });
-  
+
+      let keyResults: KeyResults[] = []
+      
+      for (let obj of filteredObjectives) {
+        keyResults.push(await this.keyResultsService.findOne(obj.id))
+      }
+
+      const keyResultIds = keyResults.map((kr) => kr.id);
+
+      let tasks: Tasks[] = []
+      
+      for (let keyResult of keyResultIds){
+        tasks.push(await this.tasksService.findOne(keyResult))
+      }
+
+      let columnsKeyResults: ColumnsKeyResults[] = []
+
+      for (let task of tasks){
+        columnsKeyResults.push(await this.columnsKeyResultsService.findOne(task.keyResultId.id))
+      }
+
       // Crie um mapeamento de IDs para nomes de colunas
       const columnIdToNameMap = columnsKeyResults.reduce((acc, column) => {
         acc[column.id] = column.column_name;

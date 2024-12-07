@@ -233,11 +233,10 @@ describe('FilesService', () => {
       .mockResolvedValueOnce(50)
       .mockResolvedValueOnce(75);
 
-    const companyId = 1;
     const projectId = 1;
     const year = 2024;
 
-    const result = await service.generateOkrProgress(companyId, projectId, year);
+    const result = await service.generateOkrProgress( projectId, year);
 
     console.log('result'  , result)
 

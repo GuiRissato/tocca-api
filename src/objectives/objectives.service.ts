@@ -22,9 +22,9 @@ export class ObjectivesService {
     }
   }
 
-  findAll(projectId: number): Promise<Objectives[]> {
+ async  findAll(projectId: number): Promise<Objectives[]> {
     try {
-      const allObjectives = this.repository.find({
+      const allObjectives = await this.repository.find({
         where: { project_id: projectId },
       });
       return allObjectives;
