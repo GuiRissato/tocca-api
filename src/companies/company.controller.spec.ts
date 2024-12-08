@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyController } from './company.controller';
-import { CompanyService } from './company.service';
+import { CompaniesService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
@@ -15,21 +15,21 @@ const mockCompanyService = {
 
 describe('CompanyController', () => {
   let controller: CompanyController;
-  let service: CompanyService;
+  let service: CompaniesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CompanyController],
       providers: [
         {
-          provide: CompanyService,
+          provide: CompaniesService,
           useValue: mockCompanyService,
         },
       ],
     }).compile();
 
     controller = module.get<CompanyController>(CompanyController);
-    service = module.get<CompanyService>(CompanyService);
+    service = module.get<CompaniesService>(CompaniesService);
   });
 
   afterEach(() => {

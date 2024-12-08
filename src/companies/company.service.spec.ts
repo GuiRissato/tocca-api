@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompanyService } from './company.service';
+import { CompaniesService } from './company.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Companies } from './entities/company.entity';
@@ -15,13 +15,13 @@ const mockCompanyRepository = {
 };
 
 describe('CompanyService', () => {
-  let service: CompanyService;
+  let service: CompaniesService;
   let repository: Repository<Companies>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CompanyService,
+        CompaniesService,
         {
           provide: getRepositoryToken(Companies),
           useValue: mockCompanyRepository,
@@ -29,7 +29,7 @@ describe('CompanyService', () => {
       ],
     }).compile();
 
-    service = module.get<CompanyService>(CompanyService);
+    service = module.get<CompaniesService>(CompaniesService);
     repository = module.get<Repository<Companies>>(getRepositoryToken(Companies));
   });
 
