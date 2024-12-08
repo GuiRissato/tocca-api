@@ -546,8 +546,5 @@ describe('FilesService', () => {
         { columnName: 'Fechado', percentage: 36.36 },
       ],
     });
-
-
-
   });
 });
