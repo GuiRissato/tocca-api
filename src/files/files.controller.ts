@@ -6,17 +6,17 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post('okrProgress')
-  getPdfOkrProgress(@Body() companyId: number, @Body() projectId: number, @Body() year: number) {
-    return this.filesService.generateOkrProgress(companyId, projectId, year);
+  getPdfOkrProgress(@Body() projectId: number, @Body() year: number) {
+    return this.filesService.generateOkrProgress( projectId, year);
   }
 
   @Post('taskPerformance')
-  getPdfTaskPerformance(@Body() companyId: number, @Body() projectId: number, @Body() year: number) {
-    return this.filesService.generatePdfTaskPerformance(companyId, projectId, year);
+  getPdfTaskPerformance(@Body() projectId: number, @Body() year: number) {
+    return this.filesService.generatePdfTaskPerformance( projectId, year);
   }
 
   @Post('deadlines')
-  getPdfDeadLines(@Body() companyId: number, @Body() projectId: number, @Body() year: number) {
-    return this.filesService.generatePdfDeadLines(companyId, projectId, year);
+  getPdfDeadLines(@Body() projectId: number, @Body() year: number) {
+    return this.filesService.generatePdfDeadLines( projectId, year);
   }
 }

@@ -100,10 +100,9 @@ export class FilesService {
   
     } catch (error) {
       console.error('Error generating Okr Progress PDF', error.message);
-      throw new Error('Error generating Okr Progress PDF');
+      throw new Error(error ? error.message : 'Error generating Okr Progress PDF');
     }
   }
-  
   
   async calculateObjectiveProgress(objectiveId: number): Promise<number> {
     const keyResults = await this.keyResultsService.findAll(objectiveId);
@@ -127,46 +126,43 @@ export class FilesService {
     return progress;
   }
 
-  async generatePdfTaskPerformance(companyId: number, projectId: number, year: number): Promise<TaskPerformance> {
+  async generatePdfTaskPerformance( projectId: number, year: number): Promise<TaskPerformance> {
     try {
 
-      const okrProject = await this.okrProjectsRepository.findOne({
-        where: { company_id: companyId, id: projectId },
-      });
+      const okrProject = await this.OkrProjectsService.findOne(projectId);
 
       if (!okrProject) {
         throw new Error('Projeto não encontrado!');
       }
 
-      const objectives = await this.objectivesRepository
-        .createQueryBuilder('objective')
-        .where('objective.project_id = :projectId', { projectId })
-        .andWhere('EXTRACT(YEAR FROM objective.created_at) = :year', { year })
-        .getMany();
+      const objectives = await this.ObjectivesService.findAll(projectId);
 
-      const objectiveIds = objectives.map((obj) => obj.id);
-      const keyResults = await this.keyResultsRepository
-        .createQueryBuilder('key_result')
-        .where('key_result.objective_id IN (:...objectiveIds)', { objectiveIds })
-        .getMany();
+      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
 
+      let keyResults: KeyResults[] = [];
+
+      for (let obj of filteredObjectives) {
+        const krs = await this.keyResultsService.findAll(obj.id);
+        keyResults.push(...krs);
+      }
       const keyResultIds = keyResults.map((kr) => kr.id);
-      const tasks = await this.tasksRepository
-      .createQueryBuilder('task')
-      .leftJoinAndSelect('task.keyResultId', 'keyResult')
-      .leftJoinAndSelect('keyResult.objective', 'objective')
-      .where('task.key_result_id IN (:...keyResultIds)', { keyResultIds })
-      .getMany();
 
-      const performanceByObjective = objectives.map((obj) => {
+      let tasks: Tasks[] = []
+      
+      for (let keyResult of keyResultIds){
+        const tks = await this.tasksService.findAll(keyResult);
+        tasks.push(...tks);
+      }
+
+      const performanceByObjective = filteredObjectives.map((obj) => {
         const relatedKeyResults = keyResults.filter((kr) => kr.objective_id === obj.id);
         const relatedTasks = tasks.filter((task) =>
           relatedKeyResults.some((kr) => kr.id === task.key_result_id),
         );
 
-        const columns = ['Para Fazer', 'Em Progresso', 'Finalizadas'];
+        const expectedColumns = ['Para Fazer', 'Em Progresso', 'Fechado'];
 
-        const columnPerformance = columns.map((columnName) => {
+        const columnPerformance = expectedColumns.map((columnName) => {
           const columnTasks = relatedTasks.filter((task) => task.columnKeyResultId.column_name === columnName);
           const totalTasks = columnTasks.length;
 
@@ -198,14 +194,21 @@ export class FilesService {
       };
     } catch (error) {
       console.error('Erro ao gerar o PDF de desempenho das tarefas', error.message);
-      throw new Error('Erro ao gerar o PDF de desempenho das tarefas');
+      throw new Error(error ? error.message : 'Erro ao gerar o PDF de desempenho das tarefas');
     }
   }
   
   private getDelayedTasks(tasks: Tasks[]): DelayedTaskSummary {
     try {
-      const delayedTasks = tasks.filter((task) => task.due_date.getTime() - task.created_at.getTime() < Date.now());
-    
+      const now = Date.now();
+      const delayedTasks = tasks.filter((task) => task.due_date.getTime() < now);
+      
+      const delayedTasksByPriority = {
+        high: delayedTasks.filter(task => task.priority === 1).length,
+        medium: delayedTasks.filter(task => task.priority === 2).length,
+        low: delayedTasks.filter(task => task.priority === 3).length,
+      };
+  
       const groupedByReason = delayedTasks.reduce((acc, task) => {
         const reason = task.delay_reason || 'Desconhecido';
         if (!acc[reason]) {
@@ -217,7 +220,8 @@ export class FilesService {
     
       return {
         totalDelayedTasks: delayedTasks.length,
-        reasons: Object.entries(groupedByReason).map(([reason, tasks]) => ({
+        delayedTasksByPriority,
+        delayReasons: Object.entries(groupedByReason).map(([reason, tasks]) => ({
           reason,
           tasks: tasks.map((task) => ({
             taskName: task.task_name,
@@ -227,43 +231,46 @@ export class FilesService {
         })),
       };
     } catch (error) {
-      console.error( 'error getting delayed tasks', error.message);
-      return { totalDelayedTasks: 0, reasons: [] };
+      console.error('error getting delayed tasks', error.message);
+      return { 
+        totalDelayedTasks: 0, 
+        delayedTasksByPriority: { high: 0, medium: 0, low: 0 },
+        delayReasons: [] 
+      };
     }
   }
 
   async generatePdfDeadLines(
-    companyId: number,
     projectId: number,
     year: number
   ): Promise<ImportantDatesPdfData> {
     try {
 
-      const okrProject = await this.okrProjectsRepository.findOne({
-        where: { company_id: companyId, id: projectId },
-      });
+      const okrProject = await this.OkrProjectsService.findOne(projectId);
 
       if (!okrProject) {
         throw new Error('Projeto não encontrado!');
       }
 
-      const objectives = await this.objectivesRepository
-        .createQueryBuilder('objective')
-        .where('objective.project_id = :projectId', { projectId })
-        .andWhere('EXTRACT(YEAR FROM objective.created_at) = :year', { year })
-        .getMany();
+      const objectives = await this.ObjectivesService.findAll(projectId);
 
-      const objectiveIds = objectives.map((obj) => obj.id);
-      const keyResults = await this.keyResultsRepository
-        .createQueryBuilder('key_result')
-        .where('key_result.objective_id IN (:...objectiveIds)', { objectiveIds })
-        .getMany();
+      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
+      
+      let keyResults: KeyResults[] = [];
 
-      const keyResultIds = keyResults.map((kr) => kr.id);
-      const tasks = await this.tasksRepository
-        .createQueryBuilder('task')
-        .where('task.key_result_id IN (:...keyResultIds)', { keyResultIds })
-        .getMany();
+      for (let obj of filteredObjectives) {
+        const krs = await this.keyResultsService.findAll(obj.id);
+        keyResults.push(...krs);
+      }
+
+       const keyResultIds = keyResults.map((kr) => kr.id);
+
+      let tasks: Tasks[] = []
+      
+      for (let keyResult of keyResultIds){
+        const tks = await this.tasksService.findAll(keyResult);
+        tasks.push(...tks);
+      }
 
       const objectivesData = objectives.map((objective) => {
         const relatedKeyResults = keyResults.filter(

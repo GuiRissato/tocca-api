@@ -35,14 +35,19 @@
   
   export interface DelayedTaskSummary {
     totalDelayedTasks: number;
-    reasons: {
+    delayedTasksByPriority: {
+      high: number;
+      medium: number;
+      low: number;
+    };
+    delayReasons: Array<{
       reason: string;
-      tasks: {
+      tasks: Array<{
         taskName: string;
         objectiveName: string;
         keyResultName: string;
-      }[];
-    }[];
+      }>;
+    }>;
   }
 
   export interface Task {
@@ -70,3 +75,5 @@
     name: string;
     dueDate: string | null;
   }
+
+  
