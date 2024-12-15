@@ -1,3 +1,5 @@
+import { Tasks } from "src/tasks/entities/task.entity";
+
   export interface OkrProgress {
     projectId: number;
     projectName: string;
@@ -24,13 +26,14 @@
   
   interface ObjectivePerformance {
     objectiveName: string;
-    result: ColumnPerformance[];
+    columns: TasksInColumn[];
   }
   
-  interface ColumnPerformance {
+  interface TasksInColumn {
     columnName: string;
     totalTasks: number;
     averageCompletionTime: number;
+    tasks: Tasks[];
   }
   
   export interface DelayedTaskSummary {

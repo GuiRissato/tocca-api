@@ -60,8 +60,6 @@ export class FilesService {
         return acc;
       }, {} as Record<number, string>);
 
-
-  
       const columnCounts = tasks.reduce((acc, task) => {
         const columnName = columnIdToNameMap[task.columnKeyResultId.id];
         if (columnName) {
@@ -69,8 +67,6 @@ export class FilesService {
         }
         return acc;
       }, {} as Record<string, number>);
-
-      console.log(columnCounts)
 
       const totalTasks = tasks.length;
 
@@ -126,66 +122,104 @@ export class FilesService {
     return progress;
   }
 
-  async generatePdfTaskPerformance( projectId: number, year: number): Promise<TaskPerformance> {
+  async generatePdfTaskPerformance(projectId: number, year: number): Promise<TaskPerformance> {
     try {
-
       const okrProject = await this.OkrProjectsService.findOne(projectId);
-
+  
       if (!okrProject) {
         throw new Error('Projeto não encontrado!');
       }
-
+  
       const objectives = await this.ObjectivesService.findAll(projectId);
-
-      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
-
+  
+      // Filtrar objetivos pelo ano especificado
+      const filteredObjectives = objectives.filter(
+        (objective) => getYear(objective.created_at) === year
+      );
+  
+      // Recuperar KRs associados aos objetivos filtrados
       let keyResults: KeyResults[] = [];
-
+  
       for (let obj of filteredObjectives) {
         const krs = await this.keyResultsService.findAll(obj.id);
         keyResults.push(...krs);
       }
-      const keyResultIds = keyResults.map((kr) => kr.id);
-
-      let tasks: Tasks[] = []
-      
-      for (let keyResult of keyResultIds){
-        const tks = await this.tasksService.findAll(keyResult);
+  
+      // Obter todas as tarefas vinculadas aos KRs
+      let tasks: Tasks[] = [];
+  
+      for (let keyResult of keyResults) {
+        console.log('keyResult', keyResult.id)
+        const tks = await this.tasksService.findAll(keyResult.id);
+        console.log('tks',tks)
         tasks.push(...tks);
       }
 
-      const performanceByObjective = filteredObjectives.map((obj) => {
-        const relatedKeyResults = keyResults.filter((kr) => kr.objective_id === obj.id);
-        const relatedTasks = tasks.filter((task) =>
-          relatedKeyResults.some((kr) => kr.id === task.key_result_id),
+      // Definir as colunas de interesse
+      const expectedColumns = ['Para Fazer', 'Em Progresso', 'Finalizado'];
+  
+      // Agrupar tarefas por objetivos e colunas
+      const performanceByObjective = filteredObjectives.map((objective) => {
+        // Filtrar KRs relacionados ao objetivo
+        const relatedKeyResults = keyResults.filter(
+          (kr) => kr.objective_id === objective.id
         );
-
-        const expectedColumns = ['Para Fazer', 'Em Progresso', 'Fechado'];
-
-        const columnPerformance = expectedColumns.map((columnName) => {
-          const columnTasks = relatedTasks.filter((task) => task.columnKeyResultId.column_name === columnName);
-          const totalTasks = columnTasks.length;
-
+  
+        // Filtrar tarefas relacionadas aos KRs do objetivo
+        const relatedTasks = tasks.filter((task) =>
+          relatedKeyResults.some((kr) => kr.id === task.key_result_id)
+        );
+  
+        // Agrupar tarefas por coluna
+        const tasksGroupedByColumn = expectedColumns.map((columnName) => {
+          const tasksInColumn = relatedTasks.filter(
+            (task) =>
+              task.columnKeyResultId &&
+              task.columnKeyResultId.column_name === columnName
+          );
+  
+          // Realizar tratamentos necessários nas tarefas desta coluna
+          const totalTasks = tasksInColumn.length;
+  
+          // Calcular o tempo médio de conclusão (exemplo de tratamento)
           const averageCompletionTime =
             totalTasks > 0
-              ? columnTasks.reduce((sum, task) => sum + task.due_date.getTime() - task.created_at.getTime(), 0) / totalTasks
+              ? tasksInColumn.reduce(
+                  (sum, task) =>
+                    sum + (task.due_date.getTime() - task.created_at.getTime()),
+                  0
+                ) / totalTasks
               : 0;
-
+  
           return {
             columnName,
             totalTasks,
             averageCompletionTime,
+            tasks: tasksInColumn, // Incluímos as tarefas para possíveis tratamentos adicionais
           };
         });
-
+  
         return {
-          objectiveName: obj.objective_name,
-          result: columnPerformance,
+          objectiveName: objective.objective_name,
+          columns: tasksGroupedByColumn,
         };
       });
-
+  
+      // Obter tarefas atrasadas (se necessário)
       const delayedTasks = this.getDelayedTasks(tasks);
+  
 
+      // console.log(
+      //   'generatePdfTaskPerformance: ',
+      //   {
+      //     projectId,
+      //     projectName: okrProject.project_name,
+      //     performanceByObjective,
+      //     delayedTasks,
+      //   }
+
+      // )
+      // Retornar os dados de desempenho
       return {
         projectId,
         projectName: okrProject.project_name,
@@ -194,7 +228,9 @@ export class FilesService {
       };
     } catch (error) {
       console.error('Erro ao gerar o PDF de desempenho das tarefas', error.message);
-      throw new Error(error ? error.message : 'Erro ao gerar o PDF de desempenho das tarefas');
+      throw new Error(
+        error ? error.message : 'Erro ao gerar o PDF de desempenho das tarefas'
+      );
     }
   }
   

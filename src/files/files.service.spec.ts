@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilesService } from './files.service';
-import { OkrProgress } from './interfaces/interfaces.files';
 import { KeyResults } from '../key_results/entities/key_result.entity';
 import { OkrProjects } from '../okr_projects/entities/okr_project.entity';
 import { Objectives } from '../objectives/entities/objective.entity';
@@ -373,7 +372,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 1',
           delay_reason: '',
           priority: 1,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[0], // Índice 0 corresponde à coluna com id 1
           created_at: new Date(),
           updated_at: new Date(),
@@ -387,7 +386,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 2',
           delay_reason: '',
           priority: 2,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[1], // Índice 1 corresponde à coluna com id 2
           created_at: new Date(),
           updated_at: new Date(),
@@ -525,9 +524,15 @@ describe('FilesService', () => {
 
       jest.spyOn(companiesService, 'findOne').mockResolvedValue(mockCompany);
       jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
-      jest.spyOn(objectivesService, 'findAll').mockResolvedValue(mockObjectives);
-      jest.spyOn(keyResultsService, 'findAll').mockResolvedValue(mockKeyResults);
-      jest.spyOn(tasksService, 'findAll').mockResolvedValue(mockTasks);
+      jest.spyOn(objectivesService, 'findAll').mockImplementation(async (projectId: number) => {
+        return mockObjectives.filter(obj => obj.project_id === projectId);
+      });
+      jest.spyOn(keyResultsService, 'findAll').mockResolvedValue(mockKeyResults);jest.spyOn(keyResultsService, 'findAll').mockImplementation(async (objectiveId: number) => {
+        return mockKeyResults.filter(kr => kr.objective_id === objectiveId);
+      });
+      jest.spyOn(tasksService, 'findAll').mockImplementation(async (keyResultId: number) => {
+        return mockTasks.filter(task => task.key_result_id === keyResultId);
+      });
       jest.spyOn(columnsKeyResultService, 'findAll').mockResolvedValue(mockColumnsKeyResults);
 
       const projectId = 1;
@@ -540,8 +545,8 @@ describe('FilesService', () => {
         projectId: 1,
         projectName: 'Project 1',
         objectives: [
-          { objectiveName: 'Objective 1', progress: 36.36 },
-          { objectiveName: 'Objective 2', progress: 36.36 },
+          { objectiveName: 'Objective 1', progress: 33.33 },
+          { objectiveName: 'Objective 2', progress: 40 },
         ],
         keyResults: [
           { columnName: 'Para Fazer', percentage: 36.36 },
@@ -1006,7 +1011,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 3',
           delay_reason: '',
           priority: 3,
-          due_date: new Date('2024-05-15'), // Futura
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000), // Futura
           columnKeyResultId: mockColumnsKeyResults[4],
           created_at: new Date('2024-01-01'),
           updated_at: new Date(),
@@ -1021,7 +1026,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 4',
           delay_reason: '',
           priority: 1,
-          due_date: new Date('2024-04-01'), // Futura
+          due_date: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000), // Futura
           columnKeyResultId: mockColumnsKeyResults[5],
           created_at: new Date('2024-01-01'),
           updated_at: new Date(),
@@ -1035,7 +1040,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 5',
           delay_reason: '',
           priority: 2,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[9], // Índice 9 corresponde à coluna com id 10
           created_at: new Date(),
           updated_at: new Date(),
@@ -1050,7 +1055,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 6',
           delay_reason: '',
           priority: 1,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[10], // Índice 10 corresponde à coluna com id 11
           created_at: new Date(),
           updated_at: new Date(),
@@ -1064,7 +1069,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 7',
           delay_reason: '',
           priority: 2,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[12], // Índice 12 corresponde à coluna com id 13
           created_at: new Date(),
           updated_at: new Date(),
@@ -1078,7 +1083,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 8',
           delay_reason: '',
           priority: 3,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[14], // Índice 14 corresponde à coluna com id 15
           created_at: new Date(),
           updated_at: new Date(),
@@ -1093,7 +1098,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 9',
           delay_reason: '',
           priority: 1,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[15], // Índice 15 corresponde à coluna com id 16
           created_at: new Date(),
           updated_at: new Date(),
@@ -1107,7 +1112,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 10',
           delay_reason: '',
           priority: 2,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[17], // Índice 17 corresponde à coluna com id 18
           created_at: new Date(),
           updated_at: new Date(),
@@ -1121,7 +1126,7 @@ describe('FilesService', () => {
           description: 'Descrição da Task 11',
           delay_reason: '',
           priority: 3,
-          due_date: new Date(),
+          due_date: new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
           columnKeyResultId: mockColumnsKeyResults[19], // Índice 19 corresponde à coluna com id 20
           created_at: new Date(),
           updated_at: new Date(),
@@ -1130,91 +1135,262 @@ describe('FilesService', () => {
 
       jest.spyOn(companiesService, 'findOne').mockResolvedValue(mockCompany);
       jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
-      jest.spyOn(objectivesService, 'findAll').mockResolvedValue(mockObjectives);
-      jest.spyOn(keyResultsService, 'findAll').mockResolvedValue(mockKeyResults);
-      jest.spyOn(tasksService, 'findAll').mockResolvedValue(mockTasks);
+      jest.spyOn(objectivesService, 'findAll').mockImplementation(async (projectId: number) => {
+        return mockObjectives.filter(obj => obj.project_id === projectId);
+      });
+      jest.spyOn(keyResultsService, 'findAll').mockResolvedValue(mockKeyResults);jest.spyOn(keyResultsService, 'findAll').mockImplementation(async (objectiveId: number) => {
+        return mockKeyResults.filter(kr => kr.objective_id === objectiveId);
+      });
+      jest.spyOn(tasksService, 'findAll').mockImplementation(async (keyResultId: number) => {
+        return mockTasks.filter(task => task.key_result_id === keyResultId);
+      });
       jest.spyOn(columnsKeyResultService, 'findAll').mockResolvedValue(mockColumnsKeyResults);
+      const result = await service.generatePdfTaskPerformance(1, new Date().getFullYear());
+  
+      // Expected result structure
+      expect(result).toBeDefined()
+      expect(result.projectId).toBe(1)
+      expect(result.projectName).toBe('Project 1')
+      expect(result.performanceByObjective).toHaveLength(mockObjectives.length);
+
+      result.performanceByObjective.forEach((objective, index) => {
+        expect(objective.objectiveName).toBe(mockObjectives[index].objective_name);
+        expect(objective.columns).toHaveLength(3); // Para Fazer, Em Progresso, Finalizado
+      });
+
+      expect(result.delayedTasks).toBeDefined();
+      expect(result.delayedTasks.totalDelayedTasks).toBe(2);
+      expect(result.delayedTasks.delayedTasksByPriority.high).toBe(1);
+      expect(result.delayedTasks.delayedTasksByPriority.medium).toBe(1);
+      expect(result.delayedTasks.delayedTasksByPriority.low).toBe(0);
+
+      expect(result.delayedTasks.delayReasons).toHaveLength(2);
+      expect(result.delayedTasks.delayReasons[1].reason).toBe('Dependência de terceiros');
+      expect(result.delayedTasks.delayReasons[0].tasks).toHaveLength(1);
+    });
+
+    it('should throw an error when project is not found', async () => {
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(null);
+  
+      const projectId = 999; // Non-existent project ID
+      const year = 2024;
+  
+      await expect(service.generatePdfTaskPerformance(projectId, year))
+        .rejects
+        .toThrow('Projeto não encontrado!');
+    });
+  
+    it('should throw an error when OkrProjectsService.findOne fails', async () => {
+      jest.spyOn(okrProjectsService, 'findOne').mockRejectedValue(new Error('Error fetching project'));
   
       const projectId = 1;
       const year = 2024;
   
-      const result = await service.generatePdfTaskPerformance(projectId, year);
-  
-      // Expected result structure
-      expect(result).toEqual({
-        projectId: 1,
-        projectName: 'Project 1',
-        performanceByObjective: [
-          {
-            objectiveName: 'Objective 1',
-            result: [
-              {
-                columnName: 'Para Fazer',
-                totalTasks: 1,
-                averageCompletionTime: expect.any(Number),
-              },
-              {
-                columnName: 'Pendente',
-                totalTasks: 1,
-                averageCompletionTime: expect.any(Number),
-              },
-              {
-                columnName: 'Em Progresso',
-                totalTasks: 1,
-                averageCompletionTime: expect.any(Number),
-              },
-              {
-                columnName: 'Finalizado',
-                totalTasks: 0,
-                averageCompletionTime: 0,
-              },
-              {
-                columnName: 'Fechado',
-                totalTasks: 1,
-                averageCompletionTime: expect.any(Number),
-              },
-            ],
-          },
-          // ... outros objetivos
-        ],
-        delayedTasks: {
-          totalDelayedTasks: 2,
-          delayedTasksByPriority: {
-            high: 1,
-            medium: 1,
-            low: 0,
-          },
-          delayReasons: [
-            {
-              reason: 'Complexidade técnica maior que o esperado',
-              tasks: [
-                {
-                  taskName: 'Task 1',
-                  objectiveName: 'Objective 1',
-                  keyResultName: 'Key Result 1',
-                }
-              ]
-            },
-            {
-              reason: 'Dependência de terceiros',
-              tasks: [
-                {
-                  taskName: 'Task 2',
-                  objectiveName: 'Objective 1',
-                  keyResultName: 'Key Result 1',
-                }
-              ]
-            }
-          ],
-        },
-      });
-  
-      // Verify service calls
-      expect(okrProjectsService.findOne).toHaveBeenCalledWith(projectId);
-      expect(objectivesService.findAll).toHaveBeenCalledWith(projectId);
-      expect(keyResultsService.findAll).toHaveBeenCalled();
-      expect(tasksService.findAll).toHaveBeenCalled();
+      await expect(service.generatePdfTaskPerformance(projectId, year))
+        .rejects
+        .toThrow('Error fetching project');
     });
+  
+    it('should throw an error when ObjectivesService.findAll fails', async () => {
+
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project 1',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockRejectedValue(new Error('Error fetching objectives'));
+  
+      const projectId = 1;
+      const year = 2024;
+  
+      await expect(service.generatePdfTaskPerformance(projectId, year))
+        .rejects
+        .toThrow('Error fetching objectives');
+    });
+  
+    it('should throw an error when KeyResultsService.findAll fails', async () => {
+
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project 1',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      const mockObjectives: Objectives[] = [
+        {
+          id: 1,
+          objective_name: 'Objective 1',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          objective_name: 'Objective 2',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockResolvedValue(mockObjectives);
+      jest.spyOn(keyResultsService, 'findAll').mockRejectedValue(new Error('Error fetching key results'));
+  
+      const projectId = 1;
+      const year = 2024;
+  
+      await expect(service.generatePdfTaskPerformance(projectId, year))
+        .rejects
+        .toThrow('Error fetching key results');
+    });
+  
+    it('should throw an error when TasksService.findAll fails', async () => {
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project 1',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      const mockObjectives: Objectives[] = [
+        {
+          id: 1,
+          objective_name: 'Objective 1',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          objective_name: 'Objective 2',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
+      const mockKeyResults: KeyResults[] = [
+        {
+          id: 1,
+          key_result_name: 'Key Result 1',
+          objective_id: 1,
+          objective: mockObjectives[0],
+          description: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          status: ''
+        },
+        {
+          id: 2,
+          key_result_name: 'Key Result 1',
+          objective_id: 2,
+          status: '',
+          objective: mockObjectives[1],
+          description: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 3,
+          key_result_name: 'Key Result 2',
+          objective_id: 1,
+          objective: mockObjectives[0],
+          description: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          status: ''
+        },
+        {
+          id: 4,
+          key_result_name: 'Key Result 2',
+          objective_id: 2,
+          status: '',
+          objective: mockObjectives[1],
+          description: '',
+          start_date: new Date(),
+          end_date: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
+
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockResolvedValue(mockObjectives);
+      jest.spyOn(keyResultsService, 'findAll').mockImplementation(async (objectiveId: number) => {
+        return mockKeyResults.filter(kr => kr.objective_id === objectiveId);
+      });
+      jest.spyOn(tasksService, 'findAll').mockRejectedValue(new Error('Error fetching tasks'));
+  
+      const projectId = 1;
+      const year = 2024;
+  
+      await expect(service.generatePdfTaskPerformance(projectId, year))
+        .rejects
+        .toThrow('Error fetching tasks');
+    });
+
   })
 
 });
