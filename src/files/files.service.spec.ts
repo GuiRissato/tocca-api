@@ -1393,4 +1393,397 @@ describe('FilesService', () => {
 
   })
 
+  describe('generatePdfDeadLines', () => {
+    it('should generate PDF deadlines data successfully', async () => {
+      // Mock data
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project Alpha',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      const mockObjectives: Objectives[] = [
+        {
+          id: 1,
+          objective_name: 'Increase market share',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date('2024-01-01'),
+          end_date: new Date('2024-12-31'),
+          created_at: new Date('2024-01-15'),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          objective_name: 'Improve customer satisfaction',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date('2024-02-01'),
+          end_date: new Date('2024-12-31'),
+          created_at: new Date('2024-02-10'),
+          updated_at: new Date(),
+        },
+      ];
+
+      const mockKeyResults: KeyResults[] = [
+        {
+          id: 1,
+          key_result_name: 'Launch new product',
+          objective_id: 1,
+          objective: mockObjectives[0],
+          description: '',
+          status: '',
+          start_date: new Date('2024-01-15'),
+          end_date: new Date('2024-06-30'),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          key_result_name: 'Enhance support services',
+          objective_id: 2,
+          objective: mockObjectives[1],
+          description: '',
+          status: '',
+          start_date: new Date('2024-02-15'),
+          end_date: new Date('2024-12-31'),
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
+
+      const mockColumnsKeyResults: ColumnsKeyResults[] = [
+        {
+          id: 1,
+          column_name: 'Para Fazer',
+          key_result_id: 1,
+          keyResult: mockKeyResults[0],
+          position: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          column_name: 'Em Progresso',
+          key_result_id: 1,
+          keyResult: mockKeyResults[0],
+          position: 1,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 3,
+          column_name: 'Finalizadas',
+          key_result_id: 1,
+          keyResult: mockKeyResults[0],
+          position: 2,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        // Repeat for key result 2
+        {
+          id: 4,
+          column_name: 'Para Fazer',
+          key_result_id: 2,
+          keyResult: mockKeyResults[1],
+          position: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 5,
+          column_name: 'Em Progresso',
+          key_result_id: 2,
+          keyResult: mockKeyResults[1],
+          position: 1,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 6,
+          column_name: 'Finalizadas',
+          key_result_id: 2,
+          keyResult: mockKeyResults[1],
+          position: 2,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
+
+      const mockTasks: Tasks[] = [
+        // Tasks for Key Result 1
+        {
+          id: 1,
+          key_result_id: 1,
+          task_name: 'Design product',
+          description: 'Design the new product',
+          delay_reason: '',
+          priority: 1,
+          due_date: new Date('2024-03-01'),
+          column_key_result_id: 3, // 'Finalizadas'
+          columnKeyResultId: mockColumnsKeyResults[2],
+          keyResultId: mockKeyResults[0],
+          created_at: new Date('2024-01-20'),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          key_result_id: 1,
+          task_name: 'Develop product',
+          description: 'Develop the new product',
+          delay_reason: '',
+          priority: 2,
+          due_date: new Date('2024-05-15'),
+          column_key_result_id: 2, // 'Em Progresso'
+          columnKeyResultId: mockColumnsKeyResults[1],
+          keyResultId: mockKeyResults[0],
+          created_at: new Date('2024-03-02'),
+          updated_at: new Date(),
+        },
+        {
+          id: 3,
+          key_result_id: 1,
+          task_name: 'Market product',
+          description: 'Market the new product',
+          delay_reason: '',
+          priority: 3,
+          due_date: new Date('2024-06-30'),
+          column_key_result_id: 1, // 'Para Fazer'
+          columnKeyResultId: mockColumnsKeyResults[0],
+          keyResultId: mockKeyResults[0],
+          created_at: new Date('2024-05-16'),
+          updated_at: new Date(),
+        },
+        // Tasks for Key Result 2
+        {
+          id: 4,
+          key_result_id: 2,
+          task_name: 'Implement live chat',
+          description: 'Add live chat support',
+          delay_reason: '',
+          priority: 1,
+          due_date: new Date('2024-08-01'),
+          column_key_result_id: 6, // 'Finalizadas'
+          columnKeyResultId: mockColumnsKeyResults[5],
+          keyResultId: mockKeyResults[1],
+          created_at: new Date('2024-06-01'),
+          updated_at: new Date(),
+        },
+        {
+          id: 5,
+          key_result_id: 2,
+          task_name: 'Extend support hours',
+          description: 'Extend customer support hours',
+          delay_reason: '',
+          priority: 2,
+          due_date: new Date('2024-09-15'),
+          column_key_result_id: 6, // 'Finalizadas'
+          columnKeyResultId: mockColumnsKeyResults[5],
+          keyResultId: mockKeyResults[1],
+          created_at: new Date('2024-07-15'),
+          updated_at: new Date(),
+        },
+        {
+          id: 6,
+          key_result_id: 2,
+          task_name: 'Introduce feedback surveys',
+          description: 'Implement customer feedback surveys',
+          delay_reason: '',
+          priority: 3,
+          due_date: new Date('2024-10-31'),
+          column_key_result_id: 5, // 'Em Progresso'
+          columnKeyResultId: mockColumnsKeyResults[4],
+          keyResultId: mockKeyResults[1],
+          created_at: new Date('2024-09-16'),
+          updated_at: new Date(),
+        },
+      ];
+
+      // Mock implementations
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockImplementation(async (projectId: number) => {
+        return mockObjectives.filter(obj => obj.project_id === projectId);
+      });
+      jest.spyOn(keyResultsService, 'findAll').mockImplementation(async (objectiveId: number) => {
+        return mockKeyResults.filter(kr => kr.objective_id === objectiveId);
+      });
+      jest.spyOn(tasksService, 'findAll').mockImplementation(async (keyResultId: number) => {
+        return mockTasks.filter(task => task.key_result_id === keyResultId);
+      });
+      jest.spyOn(columnsKeyResultService, 'findAll').mockImplementation(async (columnId: number) => {
+        return mockColumnsKeyResults.filter(column => column.id === columnId);
+      });
+
+      const projectId = 1;
+      const year = 2024;
+
+      const result = await service.generatePdfDeadLines(projectId, year);
+
+      // Assertions
+      expect(result).toBeDefined();
+      expect(result.projectId).toBe(projectId);
+      expect(result.projectName).toBe('Project Alpha');
+      expect(result.objectives).toHaveLength(2);
+
+      const objective1Data = result.objectives.find(obj => obj.objectiveName === 'Increase market share');
+      const objective2Data = result.objectives.find(obj => obj.objectiveName === 'Improve customer satisfaction');
+
+      // Objective 1 assertions
+      expect(objective1Data).toBeDefined();
+      expect(objective1Data.completionDate).toBe('2024-06-30');
+      expect(objective1Data.completionPercentage).toBe(33);
+      expect(objective1Data.keyResults).toHaveLength(1);
+      expect(objective1Data.keyResults[0]).toEqual({
+        name: 'Launch new product',
+        dueDate: '2024-06-30',
+      });
+
+      // Objective 2 assertions
+      expect(objective2Data).toBeDefined();
+      expect(objective2Data.completionDate).toBe('2024-10-31');
+      expect(objective2Data.completionPercentage).toBe(67);
+      expect(objective2Data.keyResults).toHaveLength(1);
+      expect(objective2Data.keyResults[0]).toEqual({
+        name: 'Enhance support services',
+        dueDate: '2024-12-31',
+      });
+    });
+
+    // Error scenarios
+    it('should throw an error when project is not found', async () => {
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(null);
+
+      const projectId = 999; // Non-existent project ID
+      const year = 2024;
+
+      await expect(service.generatePdfDeadLines(projectId, year))
+        .rejects
+        .toThrow('Projeto não encontrado!');
+    });
+
+    it('should throw an error when OkrProjectsService.findOne fails', async () => {
+      jest.spyOn(okrProjectsService, 'findOne').mockRejectedValue(new Error('Error fetching project'));
+
+      const projectId = 1;
+      const year = 2024;
+
+      await expect(service.generatePdfDeadLines(projectId, year))
+        .rejects
+        .toThrow('Error fetching project');
+    });
+
+    it('should handle case when no objectives are found', async () => {
+
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project Alpha',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockResolvedValue([]); // No objectives
+
+      const projectId = 1;
+      const year = 2024;
+
+      const result = await service.generatePdfDeadLines(projectId, year);
+
+      expect(result).toBeDefined();
+      expect(result.objectives).toHaveLength(0);
+    });
+
+    it('should handle case when objectives have no key results', async () => {
+
+      const mockCompany: Companies = {
+        id: 1,
+        company_name: 'Company 1',
+        description: 'Description 1',
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      const mockOkrProject: OkrProjects = {
+        id: 1,
+        company_id: 1,
+        project_name: 'Project Alpha',
+        description: '',
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: mockCompany,
+      };
+
+      const mockObjectives: Objectives[] = [
+        {
+          id: 1,
+          objective_name: 'Increase market share',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date('2024-01-01'),
+          end_date: new Date('2024-12-31'),
+          created_at: new Date('2024-01-15'),
+          updated_at: new Date(),
+        },
+        {
+          id: 2,
+          objective_name: 'Improve customer satisfaction',
+          project_id: 1,
+          project: mockOkrProject,
+          description: '',
+          status: '',
+          start_date: new Date('2024-02-01'),
+          end_date: new Date('2024-12-31'),
+          created_at: new Date('2024-02-10'),
+          updated_at: new Date(),
+        },
+      ];
+      jest.spyOn(okrProjectsService, 'findOne').mockResolvedValue(mockOkrProject);
+      jest.spyOn(objectivesService, 'findAll').mockResolvedValue(mockObjectives);
+      jest.spyOn(keyResultsService, 'findAll').mockResolvedValue([]); // No key results
+      jest.spyOn(tasksService, 'findAll').mockResolvedValue([]);
+
+      const projectId = 1;
+      const year = 2024;
+
+      const result = await service.generatePdfDeadLines(projectId, year);
+
+      expect(result).toBeDefined();
+      expect(result.objectives).toHaveLength(mockObjectives.length);
+      result.objectives.forEach(obj => {
+        expect(obj.keyResults).toHaveLength(0);
+        expect(obj.completionDate).toBeNull();
+        expect(obj.completionPercentage).toBe(0);
+      });
+    });
+  });
+
 });

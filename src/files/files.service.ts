@@ -156,7 +156,7 @@ export class FilesService {
       }
 
       // Definir as colunas de interesse
-      const expectedColumns = ['Para Fazer', 'Em Progresso', 'Finalizado'];
+      const expectedColumns = ['Para Fazer', 'Em Progresso', 'Finalizadas'];
   
       // Agrupar tarefas por objetivos e colunas
       const performanceByObjective = filteredObjectives.map((objective) => {
@@ -208,17 +208,6 @@ export class FilesService {
       // Obter tarefas atrasadas (se necessário)
       const delayedTasks = this.getDelayedTasks(tasks);
   
-
-      // console.log(
-      //   'generatePdfTaskPerformance: ',
-      //   {
-      //     projectId,
-      //     projectName: okrProject.project_name,
-      //     performanceByObjective,
-      //     delayedTasks,
-      //   }
-
-      // )
       // Retornar os dados de desempenho
       return {
         projectId,
@@ -308,7 +297,7 @@ export class FilesService {
         tasks.push(...tks);
       }
 
-      const objectivesData = objectives.map((objective) => {
+      const objectivesData = filteredObjectives.map((objective) => {
         const relatedKeyResults = keyResults.filter(
           (kr) => kr.objective_id === objective.id
         );
@@ -353,7 +342,11 @@ export class FilesService {
         'Erro ao gerar o PDF de prazos e datas importantes',
         error.message
       );
-      throw new Error('Erro ao gerar o PDF de prazos e datas importantes');
+      if(error){
+        throw new Error(error.message);
+      }else{
+        throw new Error('Erro ao gerar o PDF de prazos e datas importantes');
+      }
     }
   }
 
