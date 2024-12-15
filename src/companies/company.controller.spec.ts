@@ -36,6 +36,10 @@ describe('CompanyController', () => {
     jest.clearAllMocks();
   });
 
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
   describe('create', () => {
     it('should call CompanyService.create with the correct values', async () => {
       const createCompanyDto: CreateCompanyDto = {

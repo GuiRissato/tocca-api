@@ -149,9 +149,7 @@ export class FilesService {
       let tasks: Tasks[] = [];
   
       for (let keyResult of keyResults) {
-        console.log('keyResult', keyResult.id)
         const tks = await this.tasksService.findAll(keyResult.id);
-        console.log('tks',tks)
         tasks.push(...tks);
       }
 

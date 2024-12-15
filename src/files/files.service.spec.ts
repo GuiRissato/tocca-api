@@ -1147,6 +1147,7 @@ describe('FilesService', () => {
       jest.spyOn(columnsKeyResultService, 'findAll').mockResolvedValue(mockColumnsKeyResults);
       const result = await service.generatePdfTaskPerformance(1, new Date().getFullYear());
   
+      console.log(result)
       // Expected result structure
       expect(result).toBeDefined()
       expect(result.projectId).toBe(1)
@@ -1634,6 +1635,8 @@ describe('FilesService', () => {
       const year = 2024;
 
       const result = await service.generatePdfDeadLines(projectId, year);
+
+      console.log(result)
 
       // Assertions
       expect(result).toBeDefined();
