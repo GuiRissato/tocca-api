@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyController } from './company.controller';
-import { CompanyService } from './company.service';
+import { CompaniesService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
@@ -15,25 +15,29 @@ const mockCompanyService = {
 
 describe('CompanyController', () => {
   let controller: CompanyController;
-  let service: CompanyService;
+  let service: CompaniesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CompanyController],
       providers: [
         {
-          provide: CompanyService,
+          provide: CompaniesService,
           useValue: mockCompanyService,
         },
       ],
     }).compile();
 
     controller = module.get<CompanyController>(CompanyController);
-    service = module.get<CompanyService>(CompanyService);
+    service = module.get<CompaniesService>(CompaniesService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('create', () => {
@@ -69,7 +73,7 @@ describe('CompanyController', () => {
       const company = { id: 1, name: 'Test Company' };
       mockCompanyService.findOne.mockResolvedValue(company);
 
-      const result = await controller.findOne('1');
+      const result = await controller.findOne(1);
 
       expect(mockCompanyService.findOne).toHaveBeenCalledWith(1);
       expect(result).toEqual(company);
@@ -85,7 +89,7 @@ describe('CompanyController', () => {
       const updatedCompany = { id: 1, ...updateCompanyDto };
       mockCompanyService.update.mockResolvedValue(updatedCompany);
 
-      const result = await controller.update('1', updateCompanyDto);
+      const result = await controller.update(1, updateCompanyDto);
 
       expect(mockCompanyService.update).toHaveBeenCalledWith(
         1,
@@ -100,7 +104,7 @@ describe('CompanyController', () => {
       const removedCompany = { id: 1, name: 'Test Company' };
       mockCompanyService.remove.mockResolvedValue(removedCompany);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove(1);
 
       expect(mockCompanyService.remove).toHaveBeenCalledWith(1);
       expect(result).toEqual(removedCompany);

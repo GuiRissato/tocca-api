@@ -3,6 +3,8 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { Users } from './entities/user.entity';
 
 const mockUsersService = {
   create: jest.fn(),
@@ -10,6 +12,7 @@ const mockUsersService = {
   findOne: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
+  login: jest.fn(),
 };
 
 describe('UsersController', () => {
@@ -22,7 +25,7 @@ describe('UsersController', () => {
       providers: [
         {
           provide: UsersService,
-          useValue: mockUsersService,
+          useValue: mockUsersService
         },
       ],
     }).compile();
@@ -36,7 +39,7 @@ describe('UsersController', () => {
   });
 
   describe('create', () => {
-    it('should call UsersService.create with the correct values', async () => {
+    it('should call Users create with the correct values', async () => {
       const createUserDto: CreateUserDto = {
         company_id: 1,
         username: 'Test User',
@@ -98,10 +101,37 @@ describe('UsersController', () => {
       const removedUser = { id: 1, username: 'Test User' };
       mockUsersService.remove.mockResolvedValue(removedUser);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove(1);
 
-      expect(service.remove).toHaveBeenCalledWith('1');
+      expect(service.remove).toHaveBeenCalledWith(1);
       expect(result).toEqual(removedUser);
+    });
+  });
+
+  describe('login', () => {
+    it('should login a user', async () => {
+      const createUserDto: CreateUserDto = {
+        company_id: 1,
+        username: 'Test User',
+        email: 'test@example.com',
+        password: 'password',
+        role_id: 1,
+      };
+      const createdUser = { id: 1, ...createUserDto };
+  
+      mockUsersService.create.mockResolvedValue(createdUser);
+  
+      await controller.create(createUserDto);
+  
+      const loginUserDto: LoginUserDto = { username: 'Test User', password: 'password' };
+      const expectedResult = { user: createdUser, token: 'mockToken' };
+  
+      mockUsersService.login.mockResolvedValue(expectedResult);
+  
+      const result = await controller.login(loginUserDto);
+  
+      expect(service.login).toHaveBeenCalledWith(loginUserDto);
+      expect(result).toEqual(expectedResult);
     });
   });
 });

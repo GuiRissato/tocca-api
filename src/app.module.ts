@@ -4,8 +4,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CompanyModule } from './companies/company.module';
-import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { OkrProjectsModule } from './okr_projects/okr_projects.module';
+import { ObjectivesModule } from './objectives/objectives.module';
+import { KeyResultsModule } from './key_results/key_results.module';
+import { ColumnsKeyResultModule } from './columns_key_result/columns_key_result.module';
+import { TasksModule } from './tasks/tasks.module';
+import { TaskAssigneesModule } from './task_assingees/task_assignee.module';
+import { CommentsModule } from './comments/comments.module';
+import { TagsModule } from './tags/tags.module';
+import { TaskTagsModule } from './task_tags/task_tags.module';
+import { RolesModule } from './roles/roles.module';
+import { JwtModule } from '@nestjs/jwt';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -22,8 +33,23 @@ import { UsersModule } from './users/users.module';
     }),
     CompanyModule,
     UsersModule,
+    OkrProjectsModule,
+    ObjectivesModule,
+    KeyResultsModule,
+    ColumnsKeyResultModule,
+    TasksModule,
+    TaskAssigneesModule,
+    CommentsModule,
+    TagsModule,
+    TaskTagsModule,
+    RolesModule,
+    FilesModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
-  controllers: [AppController, UsersController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

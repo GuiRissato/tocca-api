@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CompanyService } from './company.service';
+import { CompaniesService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 
-@Controller('company')
+@Controller('companies')
 export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+  constructor(private readonly companyService: CompaniesService) {}
 
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto) {
@@ -26,17 +26,17 @@ export class CompanyController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companyService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.companyService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
+  update(@Param('id') id: number, @Body() updateCompanyDto: UpdateCompanyDto) {
+    return this.companyService.update(id, updateCompanyDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.companyService.remove(id);
   }
 }

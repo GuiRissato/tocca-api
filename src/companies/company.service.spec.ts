@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompanyService } from './company.service';
+import { CompaniesService } from './company.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Company } from './entities/company.entity';
+import { Companies } from './entities/company.entity';
 
 const mockCompanyRepository = {
   create: jest.fn(),
@@ -15,22 +15,22 @@ const mockCompanyRepository = {
 };
 
 describe('CompanyService', () => {
-  let service: CompanyService;
-  let repository: Repository<Company>;
+  let service: CompaniesService;
+  let repository: Repository<Companies>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CompanyService,
+        CompaniesService,
         {
-          provide: getRepositoryToken(Company),
+          provide: getRepositoryToken(Companies),
           useValue: mockCompanyRepository,
         },
       ],
     }).compile();
 
-    service = module.get<CompanyService>(CompanyService);
-    repository = module.get<Repository<Company>>(getRepositoryToken(Company));
+    service = module.get<CompaniesService>(CompaniesService);
+    repository = module.get<Repository<Companies>>(getRepositoryToken(Companies));
   });
 
   afterEach(() => {

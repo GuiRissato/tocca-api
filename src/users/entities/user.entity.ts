@@ -1,3 +1,5 @@
+import { Companies } from '../../companies/entities/company.entity';
+import { Roles } from '../../roles/entities/role.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,17 +7,23 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
 @Unique(['username'])
 @Unique(['email'])
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   company_id: number;
+
+  @ManyToOne(() => Companies)
+  @JoinColumn({ name: 'company_id' })
+  company: Companies;
 
   @Column()
   username: string;
@@ -28,6 +36,10 @@ export class User {
 
   @Column()
   role_id: number;
+
+  @ManyToOne(() => Roles)
+  @JoinColumn({name: 'role_id'})
+  role: Roles;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
