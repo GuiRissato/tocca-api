@@ -6,12 +6,18 @@ import { OkrProjects } from '../okr_projects/entities/okr_project.entity';
 import { KeyResults } from '../key_results/entities/key_result.entity';
 import { Users } from '../users/entities/user.entity';
 import { ColumnsKeyResults } from '../columns_key_result/entities/columns_key_result.entity';
+import { ObjectivesService } from '../objectives/objectives.service';
+import { KeyResultsService } from '../key_results/key_results.service';
+import { TasksService } from '../tasks/tasks.service';
+import { ColumnsKeyResultService } from '../columns_key_result/columns_key_result.service';
+import { OkrProjectsService } from '../okr_projects/okr_projects.service';
+import { Tasks } from 'src/tasks/entities/task.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Objectives, OkrProjects, KeyResults, ColumnsKeyResults, Users]),
+    TypeOrmModule.forFeature([Objectives, OkrProjects, KeyResults, ColumnsKeyResults, Tasks, Users]),
   ],
-  providers: [FilesService],
+  providers: [FilesService, OkrProjectsService, ObjectivesService, KeyResultsService, TasksService, ColumnsKeyResultService],
   exports: [FilesService],
 })
 export class FilesModule {}
