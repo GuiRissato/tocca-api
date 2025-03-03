@@ -42,4 +42,9 @@ export class OkrProjectsController {
   remove(@Param('id') id: number) {
     return this.okrProjectsService.remove(id);
   }
+
+  @Get(':companyId/years')
+  findAllYears(@Param('companyId') companyId: number) {
+    return this.okrProjectsService.findAllDistinctYearsByCompany(companyId);
+  }
 }

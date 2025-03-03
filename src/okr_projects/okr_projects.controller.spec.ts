@@ -10,6 +10,7 @@ const mockOkrProjectsService = {
   findOne: jest.fn(),
   update: jest.fn(),
   remove: jest.fn(),
+  findAllDistinctYearsByCompany: jest.fn(),
 };
 
 describe('OkrProjectsController', () => {
@@ -130,6 +131,16 @@ describe('OkrProjectsController', () => {
 
       expect(service.remove).toHaveBeenCalledWith(1);
       expect(result).toEqual(removedOkrProject);
+    });
+  });
+  describe('findAllYears', () => {
+    it('should return distinct years for a given company', async () => {
+      const mockYears = [2021, 2022];
+      mockOkrProjectsService.findAllDistinctYearsByCompany.mockResolvedValue(mockYears);
+
+      const result = await controller.findAllYears(1);
+      expect(service.findAllDistinctYearsByCompany).toHaveBeenCalledWith(1);
+      expect(result).toEqual(mockYears);
     });
   });
 });

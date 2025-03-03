@@ -23,8 +23,9 @@ export class OkrProjectsService {
 
   findAll(companyId: number): Promise<OkrProjects[]> {
     try {
+      const company: any = companyId;
       const allOkrProjectsByCompany = this.repository.find({
-        where: { company_id: companyId },
+        where: { company_id: parseInt(company.companyId) },
       });
       return allOkrProjectsByCompany;
     } catch (error) {
@@ -77,6 +78,22 @@ export class OkrProjectsService {
     } catch (error) {
       console.error('error delenting okr project', error.message);
       throw 'error deleting company';
+    }
+  }
+
+  async findAllDistinctYearsByCompany(companyId: number): Promise<number[]> {
+    try {
+      const result = await this.repository
+        .createQueryBuilder('okr_projects')
+        .select("DISTINCT EXTRACT(YEAR FROM okr_projects.created_at)", 'year')
+        .where('okr_projects.company_id = :companyId', { companyId })
+        .orderBy('year', 'ASC')
+        .getRawMany();
+
+      return result.map(item => parseInt(item.year, 10));
+    } catch (error) {
+      console.error('Error retrieving distinct project years by company ID', error.message);
+      throw new Error('Error retrieving distinct project years by company ID');
     }
   }
 }
