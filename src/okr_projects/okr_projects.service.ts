@@ -4,12 +4,20 @@ import { Repository } from 'typeorm';
 import { CreateOkrProjectDto } from './dto/create-okr_project.dto';
 import { UpdateOkrProjectDto } from './dto/update-okr_project.dto';
 import { OkrProjects } from './entities/okr_project.entity';
+import { ObjectivesService } from 'src/objectives/objectives.service';
+import { KeyResultsService } from 'src/key_results/key_results.service';
+import { TasksService } from 'src/tasks/tasks.service';
+import { ColumnsKeyResultService } from 'src/columns_key_result/columns_key_result.service';
 
 @Injectable()
 export class OkrProjectsService {
   constructor(
     @InjectRepository(OkrProjects)
     private readonly repository: Repository<OkrProjects>,
+    private readonly objectivesService: ObjectivesService,
+    private readonly keyResultsService: KeyResultsService,
+    private readonly tasksService: TasksService,
+    private readonly columnsKeyResult: ColumnsKeyResultService,
   ) {}
   create(createOkrProjectDto: CreateOkrProjectDto): Promise<OkrProjects> {
     try {
@@ -21,13 +29,48 @@ export class OkrProjectsService {
     }
   }
 
-  findAll(companyId: number): Promise<OkrProjects[]> {
+  async findAll(companyId: number): Promise<any> {
     try {
       const company: any = companyId;
-      const allOkrProjectsByCompany = this.repository.find({
+      const allOkrProjectsByCompany = await this.repository.find({
         where: { company_id: parseInt(company.companyId) },
       });
-      return allOkrProjectsByCompany;
+
+      let allObjectives = []
+
+      for (let project of allOkrProjectsByCompany){
+        const resp = await this.objectivesService.findAll(project.id)
+        allObjectives.push(resp[0])
+      }
+
+      let allKeyResultByObjectives = []
+
+      for (let objective of allObjectives){
+        const resp = await this.keyResultsService.findAll(objective.id)
+        allKeyResultByObjectives.push(resp)
+      }
+
+      let allColumnsByKeyResults = []
+      for (let keyResult of allKeyResultByObjectives){
+        // ajustar aqui
+        const resp = await this.columnsKeyResult.findAll(keyResult.id)
+        allColumnsByKeyResults.push([resp])
+      }
+
+      let allTasks = []
+      for (let keyResult of allKeyResultByObjectives){
+        const resp = await this.tasksService.findAll(keyResult.id)
+        allTasks.push(resp[0])
+      }
+
+      
+      return {
+        allOkrProjectsByCompany,
+        allObjectives,
+        allKeyResultByObjectives,
+        allColumnsByKeyResults,
+        allTasks
+        };
     } catch (error) {
       console.error(
         'Error retrieving OKR projects by company ID',
