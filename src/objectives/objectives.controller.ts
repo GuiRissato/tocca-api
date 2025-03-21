@@ -25,6 +25,11 @@ export class ObjectivesController {
     return this.objectivesService.findAll(projectId);
   }
 
+  @Get('/objectives-and-key-results/:projectId')
+  findObjectivesAndKeyResults(@Param('projectId') projectId: number) {
+    return this.objectivesService.findObjectivesAndKeyResults(projectId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.objectivesService.findOne(id);
