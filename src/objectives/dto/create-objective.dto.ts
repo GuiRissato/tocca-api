@@ -16,9 +16,9 @@ export class CreateObjectiveDto {
   @IsNotEmpty()
   status: string;
 
-  @IsDate()
-  start_date: Date;
+  @IsString()
+  start_date: string;
 
-  @IsDate()
-  end_date: Date;
+  @IsString()
+  end_date: string;
 }
