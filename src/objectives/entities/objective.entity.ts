@@ -30,11 +30,11 @@ export class Objectives {
   @Column()
   status: string;
 
-  @Column()
-  start_date: string;
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+  start_date: Date;
 
-  @Column()
-  end_date: string;
+  @Column({ type: 'date' })
+  end_date: Date;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
