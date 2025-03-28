@@ -101,8 +101,8 @@ export class OkrProjectsService {
 
         result.push({
           project,
-          objectivesProgress,
-          keyResultsProgress
+          objectivesProgress: parseFloat(String(objectivesProgress)).toFixed(0),
+          keyResultsProgress: (parseFloat(String(keyResultsProgress)).toFixed(0)),
         });
       }
 

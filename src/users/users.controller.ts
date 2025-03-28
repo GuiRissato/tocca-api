@@ -31,6 +31,11 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('usersByCompany/:companyId')
+  findAllByCompany(@Param('companyId') companyId: number) {
+    return this.usersService.findAllByCompany(companyId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.usersService.findOne(id);

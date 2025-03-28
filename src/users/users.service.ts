@@ -39,6 +39,18 @@ export class UsersService {
     }
   }
 
+  async findAllByCompany(companyId: number): Promise<Users[]> {
+    try {
+      const users = await this.repository.find({
+        where: { company_id: companyId },
+      });
+      return users;
+    } catch (error) {
+      console.error('error finding users by company', error.message);
+      throw 'error finding users by company: ' + error.message;
+    }
+  }
+
   findOne(id: number): Promise<Users> {
     try {
       const findOneUser = this.repository.findOne({ where: { id } });

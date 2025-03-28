@@ -12,12 +12,16 @@ import { TasksService } from '../tasks/tasks.service';
 import { ColumnsKeyResultService } from '../columns_key_result/columns_key_result.service';
 import { OkrProjectsService } from '../okr_projects/okr_projects.service';
 import { Tasks } from 'src/tasks/entities/task.entity';
+import { TaskAssignees } from 'src/task_assingees/entities/task_assignee.entity';
+import { TaskTags } from 'src/task_tags/entities/task_tag.entity';
+import { TaskAssigneesService } from 'src/task_assingees/task_assignees.service';
+import { TaskTagsService } from 'src/task_tags/task_tags.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Objectives, OkrProjects, KeyResults, ColumnsKeyResults, Tasks, Users]),
+    TypeOrmModule.forFeature([Objectives, OkrProjects, KeyResults, ColumnsKeyResults, Tasks, Users, TaskAssignees, TaskTags]),
   ],
-  providers: [FilesService, OkrProjectsService, ObjectivesService, KeyResultsService, TasksService, ColumnsKeyResultService],
+  providers: [FilesService, OkrProjectsService, ObjectivesService, KeyResultsService, TasksService, ColumnsKeyResultService, TaskTagsService, TaskAssigneesService],
   exports: [FilesService],
 })
 export class FilesModule {}
