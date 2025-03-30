@@ -146,16 +146,15 @@ export class TasksService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Tasks> {
     try {
-      const task = await this.repository.preload({
-        id: id,
-        ...updateTaskDto,
-      });
+      const task = await this.repository.findOne({where: { id }});
+
 
       if (!task) {
         throw new NotFoundException(`Task ${id} not found`);
       }
+      this.repository.merge(task, updateTaskDto);
 
-      return this.repository.save(task);
+      return await this.repository.save(task);
     } catch (error) {
       console.error('Error updating task', error.message);
       throw new NotFoundException(error.message);
