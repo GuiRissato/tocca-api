@@ -121,7 +121,7 @@ export class FilesService {
     return progress;
   }
 
-  async generatePdfTaskPerformance(projectId: number, year: number): Promise<TaskPerformance> {
+  async generatePdfTaskPerformance(projectId: number): Promise<TaskPerformance> {
     try {
       const okrProject = await this.OkrProjectsService.findOne(projectId);
   
@@ -130,21 +130,14 @@ export class FilesService {
       }
   
       const objectives = await this.ObjectivesService.findAll(projectId);
-  
-      // Filtrar objetivos pelo ano especificado
-      const filteredObjectives = objectives.filter(
-        (objective) => getYear(objective.created_at) === year
-      );
-  
-      // Recuperar KRs associados aos objetivos filtrados
+
       let keyResults: KeyResults[] = [];
   
-      for (let obj of filteredObjectives) {
+      for (let obj of objectives) {
         const krs = await this.keyResultsService.findAll(obj.id);
         keyResults.push(...krs);
       }
-  
-      // Obter todas as tarefas vinculadas aos KRs
+
       let tasks: Tasks[] = [];
   
       for (let keyResult of keyResults) {
@@ -152,33 +145,26 @@ export class FilesService {
         tasks.push(...tks);
       }
 
-      // Definir as colunas de interesse
       const expectedColumns = ['Para Fazer', 'Em Progresso', 'Finalizadas'];
   
-      // Agrupar tarefas por objetivos e colunas
-      const performanceByObjective = filteredObjectives.map((objective) => {
-        // Filtrar KRs relacionados ao objetivo
+      const performanceByObjective = objectives.map((objective) => {
         const relatedKeyResults = keyResults.filter(
           (kr) => kr.objective_id === objective.id
         );
-  
-        // Filtrar tarefas relacionadas aos KRs do objetivo
+
         const relatedTasks = tasks.filter((task) =>
           relatedKeyResults.some((kr) => kr.id === task.key_result_id)
         );
   
-        // Agrupar tarefas por coluna
         const tasksGroupedByColumn = expectedColumns.map((columnName) => {
           const tasksInColumn = relatedTasks.filter(
-            (task) =>
-              task.columnKeyResultId &&
-              task.columnKeyResultId.column_name === columnName
+            async (task) =>
+              task.column_key_result_id &&
+              (await this.columnsKeyResultsService.findOne(task.column_key_result_id)).column_name === columnName
           );
   
-          // Realizar tratamentos necessários nas tarefas desta coluna
           const totalTasks = tasksInColumn.length;
-  
-          // Calcular o tempo médio de conclusão (exemplo de tratamento)
+
           const averageCompletionTime =
             totalTasks > 0
               ? tasksInColumn.reduce(
@@ -192,7 +178,7 @@ export class FilesService {
             columnName,
             totalTasks,
             averageCompletionTime,
-            tasks: tasksInColumn, // Incluímos as tarefas para possíveis tratamentos adicionais
+            tasks: tasksInColumn,
           };
         });
   
@@ -201,11 +187,9 @@ export class FilesService {
           columns: tasksGroupedByColumn,
         };
       });
-  
-      // Obter tarefas atrasadas (se necessário)
-      const delayedTasks = this.getDelayedTasks(tasks);
-  
-      // Retornar os dados de desempenho
+
+      const delayedTasks = await this.getDelayedTasks(tasks);
+
       return {
         projectId,
         projectName: okrProject.project_name,
@@ -220,11 +204,11 @@ export class FilesService {
     }
   }
   
-  private getDelayedTasks(tasks: Tasks[]): DelayedTaskSummary {
+  private async getDelayedTasks(tasks: Tasks[]): Promise<DelayedTaskSummary> {
     try {
       const now = Date.now();
       const delayedTasks = tasks.filter((task) => task.due_date.getTime() < now);
-      
+
       const delayedTasksByPriority = {
         high: delayedTasks.filter(task => task.priority === 1).length,
         medium: delayedTasks.filter(task => task.priority === 2).length,
@@ -239,19 +223,25 @@ export class FilesService {
         acc[reason].push(task);
         return acc;
       }, {} as Record<string, Tasks[]>);
-    
-      return {
+
+      const response = {
         totalDelayedTasks: delayedTasks.length,
         delayedTasksByPriority,
-        delayReasons: Object.entries(groupedByReason).map(([reason, tasks]) => ({
-          reason,
-          tasks: tasks.map((task) => ({
-            taskName: task.task_name,
-            objectiveName: task.keyResultId.objective.objective_name,
-            keyResultName: task.keyResultId.key_result_name,
-          })),
-        })),
+        delayReasons: await Promise.all(
+          Object.entries(groupedByReason).map(async ([reason, tasks]) => ({
+            reason,
+            tasks: await Promise.all(
+              tasks.map(async (task) => ({
+                taskName: task.task_name,
+                objectiveName: (await this.ObjectivesService.findOne((await this.keyResultsService.findOne(task.key_result_id)).objective_id)).objective_name,
+                keyResultName: (await this.keyResultsService.findOne(task.key_result_id)).key_result_name,
+              }))
+            ),
+          }))
+        ),
       };
+    
+      return response
     } catch (error) {
       console.error('error getting delayed tasks', error.message);
       return { 
@@ -264,7 +254,6 @@ export class FilesService {
 
   async generatePdfDeadLines(
     projectId: number,
-    year: number
   ): Promise<ImportantDatesPdfData> {
     try {
 
@@ -275,12 +264,10 @@ export class FilesService {
       }
 
       const objectives = await this.ObjectivesService.findAll(projectId);
-
-      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
       
       let keyResults: KeyResults[] = [];
 
-      for (let obj of filteredObjectives) {
+      for (let obj of objectives) {
         const krs = await this.keyResultsService.findAll(obj.id);
         keyResults.push(...krs);
       }
@@ -294,10 +281,11 @@ export class FilesService {
         tasks.push(...tks);
       }
 
-      const objectivesData = filteredObjectives.map((objective) => {
+      const objectivesData = objectives.map(async (objective) => {
         const relatedKeyResults = keyResults.filter(
           (kr) => kr.objective_id === objective.id
         );
+
         const relatedTasks = tasks.filter((task) =>
           relatedKeyResults.some((kr) => kr.id === task.key_result_id)
         );
@@ -310,11 +298,15 @@ export class FilesService {
         }, null as Date | null);
 
         const totalTasks = relatedTasks.length;
-        const completedTasks = relatedTasks.filter(
-          (task) => task.columnKeyResultId.column_name === 'Finalizadas'
-        ).length;
+        const completedTasks = await Promise.all(
+          relatedTasks.map(async (task) => {
+            const columnName = (await this.columnsKeyResultsService.findOne(task.column_key_result_id)).column_name;
+            return columnName === 'Fechado' ? task : null;
+          })
+        ).then(tasks => tasks.filter(task => task !== null));
+
         const completionPercentage =
-          totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+          totalTasks > 0 ? (completedTasks.length / totalTasks) * 100 : 0;
 
         return {
           objectiveName: objective.objective_name,
@@ -323,7 +315,7 @@ export class FilesService {
             : null,
           keyResults: relatedKeyResults.map((kr) => ({
             name: kr.key_result_name,
-            dueDate: kr.end_date?.toISOString().split('T')[0] || null,
+            dueDate: String(new Date(kr.end_date))
           })),
           completionPercentage: Math.round(completionPercentage),
         };
@@ -332,7 +324,7 @@ export class FilesService {
       return {
         projectId,
         projectName: okrProject.project_name,
-        objectives: objectivesData,
+        objectives: await Promise.all(objectivesData),
       };
     } catch (error) {
       console.error(

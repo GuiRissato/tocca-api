@@ -16,16 +16,14 @@ export class FilesController {
   @Post('taskPerformance')
   getPdfTaskPerformance(@Body() projectYearDto: ProjectYearDto) {
     return this.filesService.generatePdfTaskPerformance(
-      projectYearDto.projectId,
-      projectYearDto.year
+      projectYearDto.projectId
     );
   }
 
   @Post('deadlines')
   getPdfDeadLines(@Body() projectYearDto: ProjectYearDto) {
     return this.filesService.generatePdfDeadLines(
-      projectYearDto.projectId,
-      projectYearDto.year
+      projectYearDto.projectId
     );
   }
 }
