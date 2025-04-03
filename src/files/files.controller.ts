@@ -1,22 +1,32 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { FilesService } from './files.service';
+import { ProjectYearDto } from './dto/flie.dto';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post('okrProgress')
-  getPdfOkrProgress(@Body() projectId: number, @Body() year: number) {
-    return this.filesService.generateOkrProgress( projectId, year);
+  getPdfOkrProgress(@Body() projectYearDto: ProjectYearDto) {
+    return this.filesService.generateOkrProgress(
+      projectYearDto.projectId,
+      projectYearDto.year
+    );
   }
 
   @Post('taskPerformance')
-  getPdfTaskPerformance(@Body() projectId: number, @Body() year: number) {
-    return this.filesService.generatePdfTaskPerformance( projectId, year);
+  getPdfTaskPerformance(@Body() projectYearDto: ProjectYearDto) {
+    return this.filesService.generatePdfTaskPerformance(
+      projectYearDto.projectId,
+      projectYearDto.year
+    );
   }
 
   @Post('deadlines')
-  getPdfDeadLines(@Body() projectId: number, @Body() year: number) {
-    return this.filesService.generatePdfDeadLines( projectId, year);
+  getPdfDeadLines(@Body() projectYearDto: ProjectYearDto) {
+    return this.filesService.generatePdfDeadLines(
+      projectYearDto.projectId,
+      projectYearDto.year
+    );
   }
 }

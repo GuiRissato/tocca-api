@@ -30,6 +30,13 @@ export class OkrProjectsController {
     return this.okrProjectsService.findOne(id);
   }
 
+  @Get('names/:companyId/:years')
+  findAllOkrNameByCompanyAndYear(
+    @Param('companyId') companyId: number,
+    @Param('years') years: number
+  ){
+    return this.okrProjectsService.findAllOkrNamesByYear(companyId, years);
+  }
   @Patch(':id')
   update(
     @Param('id') id: number,

@@ -16,11 +16,13 @@ import { TaskAssignees } from 'src/task_assingees/entities/task_assignee.entity'
 import { TaskTags } from 'src/task_tags/entities/task_tag.entity';
 import { TaskAssigneesService } from 'src/task_assingees/task_assignees.service';
 import { TaskTagsService } from 'src/task_tags/task_tags.service';
+import { FilesController } from './files.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Objectives, OkrProjects, KeyResults, ColumnsKeyResults, Tasks, Users, TaskAssignees, TaskTags]),
   ],
+  controllers: [FilesController],
   providers: [FilesService, OkrProjectsService, ObjectivesService, KeyResultsService, TasksService, ColumnsKeyResultService, TaskTagsService, TaskAssigneesService],
   exports: [FilesService],
 })

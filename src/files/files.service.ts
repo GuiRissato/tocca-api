@@ -22,6 +22,7 @@ export class FilesService {
 
   async generateOkrProgress( projectId: number, year: number): Promise<OkrProgress> {
     try {
+
       const okrProject = await this.OkrProjectsService.findOne(projectId);
   
       if (!okrProject) {
@@ -30,28 +31,23 @@ export class FilesService {
   
       const objectives = await this.ObjectivesService.findAll(projectId);
 
-      const filteredObjectives = objectives.filter(objective => getYear(objective.created_at) === year);
-      
       let keyResults: KeyResults[] = [];
 
-      for (let obj of filteredObjectives) {
+      for (let obj of objectives) {
         const krs = await this.keyResultsService.findAll(obj.id);
         keyResults.push(...krs);
       }
 
-      const keyResultIds = keyResults.map((kr) => kr.id);
-
       let tasks: Tasks[] = []
       
-      for (let keyResult of keyResultIds){
-        const tks = await this.tasksService.findAll(keyResult);
+      for (let keyResult of keyResults){
+        const tks = await this.tasksService.findAll(keyResult.id);
         tasks.push(...tks);
       }
-
       let columnsKeyResults: ColumnsKeyResults[] = []
 
       for (let task of tasks){
-        const columnsKR = await this.columnsKeyResultsService.findAll(task.columnKeyResultId.id)
+        const columnsKR = await this.columnsKeyResultsService.findAll(task.key_result_id)
         columnsKeyResults.push(...columnsKR)
       }
 
@@ -61,13 +57,13 @@ export class FilesService {
       }, {} as Record<number, string>);
 
       const columnCounts = tasks.reduce((acc, task) => {
-        const columnName = columnIdToNameMap[task.columnKeyResultId.id];
+        const columnName = columnIdToNameMap[task.column_key_result_id];
         if (columnName) {
           acc[columnName] = (acc[columnName] || 0) + 1;      
         }
         return acc;
       }, {} as Record<string, number>);
-
+      
       const totalTasks = tasks.length;
 
       const expectedColumns = ['Para Fazer', 'Pendente', 'Em Progresso', 'Finalizado', 'Fechado'];
@@ -103,17 +99,20 @@ export class FilesService {
   async calculateObjectiveProgress(objectiveId: number): Promise<number> {
     const keyResults = await this.keyResultsService.findAll(objectiveId);
 
-    const keyResultIds = keyResults.map(kr => kr.id);
-
     let allTasks: Tasks[] = [];
-    for (const keyResultId of keyResultIds) {
-      const tasks = await this.tasksService.findAll(keyResultId);
+    for (const keyResult of keyResults) {
+      const tasks = await this.tasksService.findAll(keyResult.id);
       allTasks = allTasks.concat(tasks);
     }
 
-    const completedTasks = allTasks.filter(
-      task => task.columnKeyResultId && task.columnKeyResultId.column_name === 'Fechado'
-    );
+    const completedTasks = (
+      await Promise.all(
+        allTasks.map(async (task) => ({
+          task,
+          columnName: (await this.columnsKeyResultsService.findOne(task.column_key_result_id)).column_name,
+        }))
+      )
+    ).filter(({ columnName }) => columnName === 'Fechado').map(({ task }) => task);
   
     const totalTasks = allTasks.length;
     const completedCount = completedTasks.length;

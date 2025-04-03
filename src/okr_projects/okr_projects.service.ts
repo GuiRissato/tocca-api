@@ -113,6 +113,22 @@ export class OkrProjectsService {
     }
   }
 
+  async findAllOkrNamesByYear(companyId: number, year: number): Promise<{ project_name: string; id: number; }[]> {
+    try {
+      console.log(companyId, year)
+      const okrProjects = await this.repository
+        .createQueryBuilder('okr_projects')
+        .where('okr_projects.company_id = :companyId', { companyId: companyId })
+        .andWhere('EXTRACT(YEAR FROM okr_projects.created_at) = :year', { year })
+        .getMany();
+
+      return okrProjects.map(project => ({ project_name: project.project_name, id: project.id }));
+    } catch (error) {
+      console.error('Error retrieving OKR project names by company ID and year', error.message);
+      throw new Error('Error retrieving OKR project names by company ID and year');
+    }
+  }
+
   findOne(id: number): Promise<OkrProjects> {
     try {
       const findOneOkrProject = this.repository.findOne({ where: { id } });
