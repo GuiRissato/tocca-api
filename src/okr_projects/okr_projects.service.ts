@@ -115,7 +115,6 @@ export class OkrProjectsService {
 
   async findAllOkrNamesByYear(companyId: number, year: number): Promise<{ project_name: string; id: number; }[]> {
     try {
-      console.log(companyId, year)
       const okrProjects = await this.repository
         .createQueryBuilder('okr_projects')
         .where('okr_projects.company_id = :companyId', { companyId: companyId })

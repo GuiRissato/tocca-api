@@ -20,7 +20,7 @@ export class FilesService {
     private readonly columnsKeyResultsService: ColumnsKeyResultService,
   ) {}
 
-  async generateOkrProgress( projectId: number, year: number): Promise<OkrProgress> {
+  async generateOkrProgress( projectId: number): Promise<OkrProgress> {
     try {
 
       const okrProject = await this.OkrProjectsService.findOne(projectId);
