@@ -10,7 +10,6 @@ export class FilesController {
   getPdfOkrProgress(@Body() projectYearDto: ProjectYearDto) {
     return this.filesService.generateOkrProgress(
       projectYearDto.projectId,
-      projectYearDto.year
     );
   }
 
