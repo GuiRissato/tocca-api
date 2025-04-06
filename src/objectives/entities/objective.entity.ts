@@ -33,7 +33,7 @@ export class Objectives {
   @Column({ type: 'date', default: () => 'CURRENT_DATE' })
   start_date: Date;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   end_date: Date;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
