@@ -1635,7 +1635,6 @@ describe('FilesService', () => {
 
       const result = await service.generatePdfDeadLines(projectId, year);
 
-      console.log('deadline',result)
 
       // Assertions
       expect(result).toBeDefined();
