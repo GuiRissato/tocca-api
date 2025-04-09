@@ -32,7 +32,6 @@ import { Tasks } from "src/tasks/entities/task.entity";
   interface TasksInColumn {
     columnName: string;
     totalTasks: number;
-    averageCompletionTime: number;
     tasks: Tasks[];
   }
   

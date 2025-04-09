@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { DelayedTaskSummary, ImportantDatesPdfData, OkrProgress, TaskPerformance } from './interfaces/interfaces.files';
-import { getYear } from 'date-fns';
 import { ObjectivesService } from '../objectives/objectives.service';
 import { OkrProjectsService } from '../okr_projects/okr_projects.service';
 import { TasksService } from '../tasks/tasks.service';
@@ -145,48 +144,66 @@ export class FilesService {
         tasks.push(...tks);
       }
 
-      const expectedColumns = ['Para Fazer', 'Em Progresso', 'Finalizadas'];
-  
-      const performanceByObjective = objectives.map((objective) => {
-        const relatedKeyResults = keyResults.filter(
-          (kr) => kr.objective_id === objective.id
-        );
+      const expectedColumns = ['Para Fazer', 'Em Progresso', 'Fechado'];
 
-        const relatedTasks = tasks.filter((task) =>
-          relatedKeyResults.some((kr) => kr.id === task.key_result_id)
-        );
-  
-        const tasksGroupedByColumn = expectedColumns.map((columnName) => {
-          const tasksInColumn = relatedTasks.filter(
-            async (task) =>
-              task.column_key_result_id &&
-              (await this.columnsKeyResultsService.findOne(task.column_key_result_id)).column_name === columnName
+      const performanceByObjective = await Promise.all(
+        objectives.map(async (objective) => {
+          const relatedKeyResults = keyResults.filter(
+            (kr) => kr.objective_id === objective.id,
           );
-  
-          const totalTasks = tasksInColumn.length;
+    
+          const relatedTasks = tasks.filter((task) =>
+            relatedKeyResults.some((kr) => kr.id === task.key_result_id),
+          );
 
-          const averageCompletionTime =
-            totalTasks > 0
-              ? tasksInColumn.reduce(
-                  (sum, task) =>
-                    sum + (task.due_date.getTime() - task.created_at.getTime()),
-                  0
-                ) / totalTasks
-              : 0;
-  
+          const averageCompletionTimes = await Promise.all(
+            relatedKeyResults.map(async (kr) => {
+              const averageTime = await this.calculateAverageCompletionTimeForKeyResult(kr.id);
+              return {
+                keyResultId: kr.id,
+                keyResultName: kr.key_result_name,
+                averageCompletionDays: averageTime,
+              };
+            }),
+          );
+    
+          const tasksGroupedByColumn = await Promise.all(
+            expectedColumns.map(async (columnName) => {
+              const tasksInColumnPromises = relatedTasks.map(async (task) => {
+                const column = await this.columnsKeyResultsService.findOne(
+                  task.column_key_result_id,
+                );
+
+                return column && column.column_name === columnName ? task : null;
+              });
+
+              const tasksInColumn = (await Promise.all(tasksInColumnPromises)).filter(
+                (task) => task !== null,
+              );
+    
+              return {
+                columnName,
+                totalTasks: tasksInColumn.length,
+                tasks: tasksInColumn,
+              };
+            }),
+          );
+    
+          const totalObjectiveTasks = relatedTasks.length || 1;
+          const columnsWithPercentage = tasksGroupedByColumn.map((group) => ({
+            ...group,
+            percentage: parseFloat(
+              ((group.totalTasks / totalObjectiveTasks) * 100).toFixed(2),
+            ),
+          }));
+    
           return {
-            columnName,
-            totalTasks,
-            averageCompletionTime,
-            tasks: tasksInColumn,
+            objectiveName: objective.objective_name,
+            columns: columnsWithPercentage,
+            averageCompletionTimes,
           };
-        });
-  
-        return {
-          objectiveName: objective.objective_name,
-          columns: tasksGroupedByColumn,
-        };
-      });
+        }),
+      );
 
       const delayedTasks = await this.getDelayedTasks(tasks);
 
@@ -202,6 +219,32 @@ export class FilesService {
         error ? error.message : 'Erro ao gerar o PDF de desempenho das tarefas'
       );
     }
+  }
+
+  async calculateAverageCompletionTimeForKeyResult(keyResultId: number): Promise<number> {
+    
+    const tasks = await this.tasksService.findAll(keyResultId);
+
+    const closedTasksPromises = tasks.map(async (task) => {
+      const column = await this.columnsKeyResultsService.findOne(task.column_key_result_id);
+      return column?.column_name === 'Fechado' ? task : null;
+    });
+    const closedTasks = (await Promise.all(closedTasksPromises)).filter((t) => t !== null) as any[];
+
+    if (!closedTasks.length) {
+      return 0;
+    }
+
+    const differencesInDays = closedTasks.map((task) => {
+      const timeDiffMs = new Date(task.updated_at).getTime() - new Date(task.created_at).getTime();
+      const daysDiff = timeDiffMs / (1000 * 60 * 60 * 24);
+      return daysDiff;
+    });
+
+    const totalDiff = differencesInDays.reduce((acc, diff) => acc + diff, 0);
+    const averageDays = totalDiff / closedTasks.length;
+
+    return parseFloat(averageDays.toFixed(2));
   }
   
   private async getDelayedTasks(tasks: Tasks[]): Promise<DelayedTaskSummary> {
@@ -225,6 +268,7 @@ export class FilesService {
       }, {} as Record<string, Tasks[]>);
 
       const response = {
+        totalTasks: tasks.length,
         totalDelayedTasks: delayedTasks.length,
         delayedTasksByPriority,
         delayReasons: await Promise.all(
