@@ -37,26 +37,26 @@ JWT_SECRET=your_jwt_secret_key
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 
 # watch mode
-$ npm run dev
+$ yarn dev
 
 # production mode
-$ npm run start:prod
+$ yarn run start:prod
 ```
 
 ## Run Tests
 
 ```bash
 # unit tests
-$ npm run test
+$ yarn test
 
 # e2e tests
-$ npm run test:e2e
+$ yarn test:e2e
 
 # test coverage
-$ npm run test:cov
+$ yarn test:cov
 ```
 
 ## API Documentation with Swagger
