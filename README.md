@@ -59,60 +59,6 @@ $ yarn test:e2e
 $ yarn test:cov
 ```
 
-## API Documentation with Swagger
-
-To add Swagger documentation to this project, follow these steps:
-
-1. Install the required dependencies:
-
-```bash
-$ npm install @nestjs/swagger swagger-ui-express
-```
-
-2. Update the `main.ts` file to include Swagger setup:
-
-```typescript
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
-  
-  // Swagger setup
-  const config = new DocumentBuilder()
-    .setTitle('TOCCA API')
-    .setDescription('API for OKR management')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-  
-  await app.listen(7560);
-}
-bootstrap();
-```
-
-3. Add Swagger decorators to your DTOs, controllers, and entities to provide detailed documentation.
-
-Example:
-```typescript
-import { ApiProperty } from '@nestjs/swagger';
-
-export class CreateUserDto {
-  @ApiProperty({ description: 'The user email' })
-  email: string;
-  
-  @ApiProperty({ description: 'The user password' })
-  password: string;
-}
-```
-
-4. Access the Swagger documentation at: `http://localhost:7560/api`
-
 ## Project Structure
 
 The project follows the modular structure of NestJS, with the following main modules:
