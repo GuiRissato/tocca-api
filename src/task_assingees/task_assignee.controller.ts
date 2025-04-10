@@ -3,7 +3,7 @@ import { TaskAssigneesService } from './task_assignees.service';
 import { CreateTaskAssigneeDto } from './dto/create-task_assignee.dto';
 import { UpdateTaskAssigneeDto } from './dto/update-task_assignee.dto';
 
-@Controller('task-assingees')
+@Controller('task-assingnees')
 export class TaskAssigneesController {
   constructor(private readonly taskAssigneesService: TaskAssigneesService) {}
 

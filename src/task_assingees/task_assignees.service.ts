@@ -45,35 +45,55 @@ export class TaskAssigneesService {
     }
   }
 
+  async findUserInfo(userId: number): Promise<any> {
+    try {
+      // Usando uma consulta personalizada para buscar informações do usuário
+      const userInfo = await this.repository.query(`
+        SELECT u.id, u.username, u.email
+        FROM users u
+        WHERE u.id = $1
+      `, [userId]);
+      
+      if (!userInfo || userInfo.length === 0) {
+        throw new NotFoundException(`User with id ${userId} not found`);
+      }
+      
+      return userInfo[0];
+    } catch (error) {
+      console.error('Error finding user info', error.message);
+      throw new NotFoundException('Error finding user info: ' + error.message);
+    }
+  }
+
   async update(taskId: number, userId: number, updateTaskAssigneeDto: UpdateTaskAssigneeDto): Promise<TaskAssignees> {
-  try {
-    const taskAssignee = await this.repository.preload({
-      task_id: taskId,
-      user_id: userId,
-      ...updateTaskAssigneeDto,
-    });
+    try {
+      const taskAssignee = await this.repository.preload({
+        task_id: taskId,
+        user_id: userId,
+        ...updateTaskAssigneeDto,
+      });
 
-    if (!taskAssignee) {
-      throw new NotFoundException(`Task assignee with task_id ${taskId} and user_id ${userId} not found`);
+      if (!taskAssignee) {
+        throw new NotFoundException(`Task assignee with task_id ${taskId} and user_id ${userId} not found`);
+      }
+
+      return this.repository.save(taskAssignee);
+    } catch (error) {
+      console.error('Error updating task assignee', error.message);
+      throw new NotFoundException('Error updating task assignee ' + error.message);
     }
-
-    return this.repository.save(taskAssignee);
-  } catch (error) {
-    console.error('Error updating task assignee', error.message);
-    throw new NotFoundException('Error updating task assignee ' + error.message);
   }
-}
 
-async remove(taskId: number, userId: number) {
-  try {
-    const taskAssignee = await this.repository.findOne({ where: { task_id: taskId, user_id: userId } });
-    if (!taskAssignee) {
-      throw new NotFoundException(`Task assignee with task_id ${taskId} and user_id ${userId} not found`);
+  async remove(taskId: number, userId: number) {
+    try {
+      const taskAssignee = await this.repository.findOne({ where: { task_id: taskId, user_id: userId } });
+      if (!taskAssignee) {
+        throw new NotFoundException(`Task assignee with task_id ${taskId} and user_id ${userId} not found`);
+      }
+      return this.repository.remove(taskAssignee);
+    } catch (error) {
+      console.error('Error deleting task assignee', error.message);
+      throw new Error ('Error deleting task assignee ' + error.message);
     }
-    return this.repository.remove(taskAssignee);
-  } catch (error) {
-    console.error('Error deleting task assignee', error.message);
-    throw new Error ('Error deleting task assignee ' + error.message);
   }
-}
 }

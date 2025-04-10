@@ -4,12 +4,16 @@ import { UpdateObjectiveDto } from './dto/update-objective.dto';
 import { Objectives } from './entities/objective.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { KeyResultsService } from 'src/key_results/key_results.service';
+import { ObjectiveWithKeyResults } from './entities/objectiveWithKeyResults';
 
 @Injectable()
 export class ObjectivesService {
+  
   constructor(
     @InjectRepository(Objectives)
     private readonly repository: Repository<Objectives>,
+    private readonly keyResultsService: KeyResultsService,
   ) {}
 
   create(createObjectiveDto: CreateObjectiveDto): Promise<Objectives> {
@@ -31,6 +35,32 @@ export class ObjectivesService {
     } catch (error) {
       console.error('error finding objectives by project_id', error.message);
       throw 'error finding objectives by project_id' + error.message;
+    }
+  }
+
+  async findObjectivesAndKeyResults(projectId: number): Promise<ObjectiveWithKeyResults[]> {
+    try {
+      const allObjectives = await this.repository.find({
+        where: { project_id: projectId },
+      });
+
+      const objectivesWithKeyResults: ObjectiveWithKeyResults[] = [];
+      
+      for (let objective of allObjectives) {
+        const keyResults = await this.keyResultsService.findAll(objective.id);
+        
+        const objectiveWithKeyResults: ObjectiveWithKeyResults = {
+          ...objective,
+          key_results: keyResults
+        };
+        
+        objectivesWithKeyResults.push(objectiveWithKeyResults);
+      }
+      
+      return objectivesWithKeyResults;
+    } catch (error) {
+      console.error('error finding objectives and key results', error.message);
+      throw 'error finding objectives and key results' + error.message;
     }
   }
 

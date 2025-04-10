@@ -17,19 +17,19 @@ export class TaskTagsController {
     return this.taskTagsService.findAll(taskId);
   }
 
-  @Get(':tasId/:tagId')
-  findOne( tasId: number, tagId: number) {
-    return this.taskTagsService.findOne(tasId, tagId);
+  @Get(':taskId/:tagId')
+  findOne( taskId: number, tagId: number) {
+    return this.taskTagsService.findOne(taskId, tagId);
   }
 
-  @Patch('tasId/:tagId')
-  update( tasId: number, tagId: number, updateTaskTagDto: UpdateTaskTagDto) {
-    return this.taskTagsService.update(tasId, tagId, updateTaskTagDto);
+  @Patch('taskId/:tagId')
+  update( taskId: number, tagId: number, updateTaskTagDto: UpdateTaskTagDto) {
+    return this.taskTagsService.update(taskId, tagId, updateTaskTagDto);
   }
 
-  @Delete(':tasId/:tagId') 
-  remove(@Param('tasId') tasId: number, @Param('tagId') tagId: number) {
-    return this.taskTagsService.remove(tasId, tagId);
+  @Delete(':taskId/:tagId') 
+  remove(@Param('taskId') taskId: number, @Param('tagId') tagId: number) {
+    return this.taskTagsService.remove(taskId, tagId);
   }
   
 }

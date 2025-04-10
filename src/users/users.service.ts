@@ -39,6 +39,18 @@ export class UsersService {
     }
   }
 
+  async findAllByCompany(companyId: number): Promise<Users[]> {
+    try {
+      const users = await this.repository.find({
+        where: { company_id: companyId },
+      });
+      return users;
+    } catch (error) {
+      console.error('error finding users by company', error.message);
+      throw 'error finding users by company: ' + error.message;
+    }
+  }
+
   findOne(id: number): Promise<Users> {
     try {
       const findOneUser = this.repository.findOne({ where: { id } });
@@ -79,7 +91,7 @@ export class UsersService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{ user: Users, token: string }> {
+  async login(loginUserDto: LoginUserDto): Promise<{ token: string }> {
     try {
       const { username, password } = loginUserDto;
       const user = await this.repository.findOne({ where: { username } });
@@ -92,11 +104,11 @@ export class UsersService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials');
       }
-  
-      const payload = { username: user.username, sub: user.id };
+      const payload = { user: { id: user.id, username: user.username, companyId: user.company_id }};
+
       const token = this.jwtService.sign(payload);
       
-      return { user, token };
+      return { token };
     } catch (error) {
       console.error('Error login ', error.message)
       throw new Error('Error login')

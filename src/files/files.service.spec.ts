@@ -1146,8 +1146,7 @@ describe('FilesService', () => {
       });
       jest.spyOn(columnsKeyResultService, 'findAll').mockResolvedValue(mockColumnsKeyResults);
       const result = await service.generatePdfTaskPerformance(1, new Date().getFullYear());
-  
-      console.log(result)
+
       // Expected result structure
       expect(result).toBeDefined()
       expect(result.projectId).toBe(1)
@@ -1156,7 +1155,7 @@ describe('FilesService', () => {
 
       result.performanceByObjective.forEach((objective, index) => {
         expect(objective.objectiveName).toBe(mockObjectives[index].objective_name);
-        expect(objective.columns).toHaveLength(3); // Para Fazer, Em Progresso, Finalizado
+        expect(objective.columns).toHaveLength(3);
       });
 
       expect(result.delayedTasks).toBeDefined();
@@ -1636,7 +1635,6 @@ describe('FilesService', () => {
 
       const result = await service.generatePdfDeadLines(projectId, year);
 
-      console.log(result)
 
       // Assertions
       expect(result).toBeDefined();

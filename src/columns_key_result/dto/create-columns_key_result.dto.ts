@@ -10,6 +10,6 @@ export class CreateColumnsKeyResultDto {
   column_name: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   position: number;
 }

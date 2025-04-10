@@ -1,3 +1,4 @@
+
 import { ColumnsKeyResults } from "../../columns_key_result/entities/columns_key_result.entity";
 import { KeyResults } from "../../key_results/entities/key_result.entity";
 import {
@@ -34,7 +35,7 @@ export class Tasks {
     @Column()
     priority: number;
 
-    @Column({ type: 'date' })
+    @Column({ type: 'timestamptz' })
     due_date: Date;
 
     @Column()

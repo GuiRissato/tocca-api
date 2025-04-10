@@ -1,85 +1,171 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# TOCCA API
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+TOCCA API is a backend application developed with NestJS for OKR (Objectives and Key Results) management. The API allows companies to manage their OKR projects, objectives, key results, and associated tasks.
 
-## Project setup
+**Important**: To run this project, you need to create a PostgreSQL database named `tocca`.
+
+## Project Setup
 
 ```bash
+# Install dependencies
+$ npm install
+
+# or using yarn
 $ yarn install
 ```
 
-## Compile and run the project
+## Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_DATABASE=tocca
+DB_SYNCHRONIZE=true
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
+```
+
+## Compile and Run the Project
 
 ```bash
 # development
-$ yarn run start
+$ npm run start
 
 # watch mode
-$ yarn run start:dev
+$ npm run dev
 
 # production mode
-$ yarn run start:prod
+$ npm run start:prod
 ```
 
-## Run tests
+## Run Tests
 
 ```bash
 # unit tests
-$ yarn run test
+$ npm run test
 
 # e2e tests
-$ yarn run test:e2e
+$ npm run test:e2e
 
 # test coverage
-$ yarn run test:cov
+$ npm run test:cov
 ```
 
-## Resources
+## API Documentation with Swagger
 
-Check out a few resources that may come in handy when working with NestJS:
+To add Swagger documentation to this project, follow these steps:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. Install the required dependencies:
 
-## Support
+```bash
+$ npm install @nestjs/swagger swagger-ui-express
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+2. Update the `main.ts` file to include Swagger setup:
 
-## Stay in touch
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  
+  // Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('TOCCA API')
+    .setDescription('API for OKR management')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+  
+  await app.listen(7560);
+}
+bootstrap();
+```
+
+3. Add Swagger decorators to your DTOs, controllers, and entities to provide detailed documentation.
+
+Example:
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateUserDto {
+  @ApiProperty({ description: 'The user email' })
+  email: string;
+  
+  @ApiProperty({ description: 'The user password' })
+  password: string;
+}
+```
+
+4. Access the Swagger documentation at: `http://localhost:7560/api`
+
+## Project Structure
+
+The project follows the modular structure of NestJS, with the following main modules:
+
+- **OKR Projects**: Management of OKR projects
+- **Objectives**: Management of objectives
+- **Key Results**: Management of key results
+- **Tasks**: Management of tasks
+- **Companies**: Management of companies
+- **Files**: Generation of reports and files
+
+## Main Entities
+
+### OKR Projects
+Represents an OKR project associated with a company.
+
+### Objectives
+Represents objectives within an OKR project.
+
+### Key Results
+Represents key results associated with objectives.
+
+### Tasks
+Represents tasks associated with key results.
+
+## API Endpoints
+
+The API provides endpoints for managing all aspects of the OKR system:
+
+- Company management
+- User management
+- OKR project management
+- Objectives management
+- Key results management
+- Task management
+- Comments and tags
+- File reports
+
+For detailed endpoint documentation, please refer to the Swagger documentation after setting it up.
+
+## Data Flow
+
+1. A company creates an OKR project
+2. Objectives are defined for the project
+3. Key results are associated with objectives
+4. Tasks are created to achieve key results
+5. Progress is monitored and reports can be generated
+
+## Security Considerations
+
+- The API uses input validation through ValidationPipe
+- JWT authentication is implemented for secure access
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the GPL-2.0 license - see the LICENSE file for details.

@@ -149,4 +149,29 @@ describe('OkrProjectsService', () => {
 
     expect(result).toEqual(mockOkrProject);
   });
+  it('should return distinct years of registration for a given company', async () => {
+    const companyId = 1;
+    const mockQueryResult = [{ year: '2021' }, { year: '2022' }];
+
+    const createQueryBuilder: any = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getRawMany: jest.fn().mockResolvedValue(mockQueryResult),
+    };
+    jest
+      .spyOn(repository, 'createQueryBuilder')
+      .mockImplementation(() => createQueryBuilder);
+
+    const result = await service.findAllDistinctYearsByCompany(companyId);
+    expect(result).toEqual([2021, 2022]);
+    expect(createQueryBuilder.select).toHaveBeenCalledWith(
+      "DISTINCT EXTRACT(YEAR FROM okr_project.created_at)",
+      'year',
+    );
+    expect(createQueryBuilder.where).toHaveBeenCalledWith(
+      'okr_project.company_id = :companyId',
+      { companyId },
+    );
+  });
 });

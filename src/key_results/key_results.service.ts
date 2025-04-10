@@ -49,15 +49,14 @@ export class KeyResultsService {
     updateKeyResultDto: UpdateKeyResultDto,
   ): Promise<KeyResults> {
     try {
-      const keyResult = await this.repository.preload({
-        id: id,
-        ...updateKeyResultDto,
-      });
-
+      const keyResult = await this.repository.findOne({ where: { id } });
       if (!keyResult) {
-        throw new NotFoundException(`key result ${id} not found`);
+        throw new NotFoundException(`Key result ${id} não encontrado`);
       }
-      return this.repository.save(keyResult);
+      
+      this.repository.merge(keyResult, updateKeyResultDto);
+      
+      return await this.repository.save(keyResult);
     } catch (error) {
       console.error('error updating key result', error.message);
       throw new NotFoundException(error.message);

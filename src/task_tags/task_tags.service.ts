@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTaskTagDto } from './dto/create-task_tag.dto';
 import { UpdateTaskTagDto } from './dto/update-task_tag.dto';
 import { TaskTags } from './entities/task_tag.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TaskTagsService {
@@ -42,6 +42,26 @@ export class TaskTagsService {
     } catch (error) {
       console.error( 'Error finding task tag', error.message );
       throw new NotFoundException( 'Error finding task tag'  + error.message );
+    }
+  }
+
+  async findTagInfo(tagId: number): Promise<any> {
+    try {
+      // Usando uma consulta personalizada para buscar informações da tag
+      const tagInfo = await this.repository.query(`
+        SELECT t.id, t.tag_name
+        FROM tags t
+        WHERE t.id = $1
+      `, [tagId]);
+      
+      if (!tagInfo || tagInfo.length === 0) {
+        throw new NotFoundException(`Tag with id ${tagId} not found`);
+      }
+      
+      return tagInfo[0];
+    } catch (error) {
+      console.error('Error finding tag info', error.message);
+      throw new NotFoundException('Error finding tag info: ' + error.message);
     }
   }
 

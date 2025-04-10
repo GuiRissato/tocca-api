@@ -1,4 +1,6 @@
+
 import { IsNotEmpty, IsString, IsNumber, IsDate, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -22,6 +24,7 @@ export class CreateTaskDto {
   priority: number;
 
   @IsOptional()
+  @Type(() => Date)
   @IsDate()
   due_date: Date;
 
