@@ -33,7 +33,7 @@ DB_SYNCHRONIZE=true
 JWT_SECRET=your_jwt_secret_key
 ```
 
-Para criar uma chave JWT basta rodar o seguinte comando no seu terminal
+To create a JWT secret key, run the following command:
 ```
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
