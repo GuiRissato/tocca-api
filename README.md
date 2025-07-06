@@ -112,6 +112,10 @@ For detailed endpoint documentation, please refer to the Swagger documentation a
 4. Tasks are created to achieve key results
 5. Progress is monitored and reports can be generated
 
+## Database Diagram
+![database-diagram](https://github.com/user-attachments/assets/af02a10e-2287-4aad-ac6f-3249b02f4146)
+
+
 ## Security Considerations
 
 - The API uses input validation through ValidationPipe
